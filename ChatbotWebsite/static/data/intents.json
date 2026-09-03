@@ -1,0 +1,192 @@
+{
+  "intents": [
+    {
+      "tag": "Greeting",
+      "patterns": [
+        "Hi",
+        "Hii",
+        "How are you",
+        "Is anyone there?",
+        "Hello",
+        "Hi Chatbot",
+        "Hello Chatbot",
+        "Good day",
+        "What's up",
+        "What is up",
+        "Howdy",
+        "Hey",
+        "Hey there",
+        "Hello there",
+        "Hi there",
+        "Good to see you"
+      ],
+      "responses": [
+        "Hello, thanks for visiting",
+        "Hi there, how can I help?",
+        "Hi there, what can I do for you?",
+        "Hello, how are you today?",
+        "Hi, how can I help you?",
+        "Hello there, tell me how are you feeling today?",
+        "Hi, how are you feeling today?",
+        "Hello, I'm glad you are here. How can I help you?",
+        "Hi there, what brings you here today?",
+        "Hi there, how are you feeling today?",
+        "Great to see you. How can I help you today?",
+        "Hello there. Glad to see you're back. What's going on in your world right now?"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Greeting2",
+      "patterns": [
+        "How are you?",
+        "How are you doing?",
+        "How are things?",
+        "How's it going?",
+        "How's life?",
+        "How's your day going?",
+        "How's your day?"
+      ],
+      "responses": [
+        "I'm doing great. Thanks for asking.",
+        "I'm doing fine. How about you?"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Morning",
+      "patterns": ["Good morning", "Morning", "Morning Chatbot"],
+      "responses": [
+        "Good morning. I hope you had a good night's sleep. How are you feeling today?"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Afternoon",
+      "patterns": ["Good afternoon", "Afternoon", "Afternoon Chatbot"],
+      "responses": ["Good afternoon. How is your day going?"],
+      "context_set": ""
+    },
+    {
+      "tag": "Evening",
+      "patterns": ["Good evening", "Evening", "Evening Chatbot"],
+      "responses": ["Good evening. How has your day been?"],
+      "context_set": ""
+    },
+    {
+      "tag": "Night",
+      "patterns": ["Good night", "Night", "Night Chatbot"],
+      "responses": [
+        "Good night. Get some proper sleep",
+        "Good night. Sweet dreams."
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Haha",
+      "patterns": ["Haha"],
+      "responses": ["Haha", "Glad you are laughing :)"],
+      "context_set": ""
+    },
+    {
+      "tag": "Goodbye",
+      "patterns": [
+        "Bye.",
+        "Bye Bye.",
+        "See you later.",
+        "Goodbye.",
+        "I am leaving.",
+        "Have a good day.",
+        "Have a nice day.",
+        "Ok bye.",
+        "Bye then.",
+        "Fare thee well.",
+        "Farewell.",
+        "Thanks, bye."
+      ],
+      "responses": [
+        "See you later.",
+        "Have a nice day.",
+        "Bye! Come back again.",
+        "I'll see you soon.",
+        "Bye. It was nice talking to you.",
+        "Goodbye! Take care.",
+        "See you later! Have a great day.",
+        "See you soon.",
+        "No problem, see you later.",
+        "Take care of yourself.",
+        "Thanks for using my services!",
+        "Always here to help!"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Thanks",
+      "patterns": [
+        "Thanks",
+        "Thank you",
+        "That's helpful",
+        "Thanks for the help",
+        "I an grateful to have you around",
+        "Thank you very much",
+        "I can't tell you how thankful I am for you"
+      ],
+      "responses": [
+        "Happy to help!",
+        "Any time!",
+        "My pleasure",
+        "You're most welcome!",
+        "No problem!",
+        "Glad I could help!",
+        "I'm humbled",
+        "I feel good talking to you too",
+        "No worries!"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Name",
+      "patterns": [
+        "Who are you?",
+        "What are you?",
+        "Who you are?",
+        "Tell me more about yourself.",
+        "What is your name?",
+        "What should I call you?",
+        "What's your name?",
+        "Tell me about yourself",
+        "Chatbot name",
+        "Your name"
+      ],
+      "responses": [
+        "Hah, thanks for asking, I am a Mental Health Chatbot designed to provide information about mental health",
+        "I'm your Personal Mental Health Chatbot/Assistance. How are you feeling today?",
+        "I'm a Mental Health Assitant designed to assist you. How are you today?",
+        "I am a conversational agent designed to mimic a therapist. So how are you feeling today?",
+        "You can call me whatever.",
+        "I'm a Mental Health Chatbot!",
+        "Call me whatever you want.",
+        "I don't have a name, you can call me whatever.",
+        "I'm a Mental Health Chatbot. How are you feeling today?"
+      ],
+      "context_set": ""
+    },
+    {
+      "tag": "Purpose",
+      "patterns": [
+        "What is the purpose of you?",
+        "What do you do?",
+        "What can you do?",
+        "What do you offer?",
+        "What is your purpose?"
+      ],
+      "responses": [
+        "I can provide general advice regarding mental health, answer questions related to mental health and make daily conversations. Do not consider me as a subsitute for an actual mental healthcare worker. Please seek help if you don't feel satisfied with me."
+      ],
+      "context_set": ""
+    }
+   
+   
+   
+  ]
+}

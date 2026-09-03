@@ -1,0 +1,1081 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<style>
+
+    /* =========================================
+       LOGIN PAGE
+    ========================================= */
+
+    .wellbot-login-page {
+        min-height: calc(100vh - 72px);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 45px 20px;
+
+        background:
+            radial-gradient(
+                circle at 10% 20%,
+                rgba(13, 202, 240, 0.10),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 90% 80%,
+                rgba(32, 201, 151, 0.08),
+                transparent 30%
+            );
+    }
+
+
+    /* =========================================
+       MAIN CARD
+    ========================================= */
+
+    .login-card {
+        width: 100%;
+
+        max-width: 1050px;
+
+        display: grid;
+
+        grid-template-columns: 0.9fr 1.1fr;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(220, 235, 239, 0.8);
+
+        border-radius: 28px;
+
+        background: rgba(255, 255, 255, 0.92);
+
+        box-shadow:
+            0 25px 70px rgba(31, 67, 77, 0.12);
+
+        backdrop-filter: blur(20px);
+
+        -webkit-backdrop-filter: blur(20px);
+
+        animation: loginCardIn 0.55s ease;
+    }
+
+
+    @keyframes loginCardIn {
+
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    /* =========================================
+       LEFT SIDE
+    ========================================= */
+
+    .login-visual {
+        position: relative;
+
+        min-height: 620px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 45px;
+
+        overflow: hidden;
+
+        color: white;
+
+        background:
+            linear-gradient(
+                145deg,
+                #0dcaf0,
+                #0799b8 55%,
+                #087f9f
+            );
+    }
+
+
+    .login-visual::before {
+        content: "";
+
+        position: absolute;
+
+        width: 300px;
+        height: 300px;
+
+        top: -120px;
+        left: -100px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.10);
+    }
+
+
+    .login-visual::after {
+        content: "";
+
+        position: absolute;
+
+        width: 250px;
+        height: 250px;
+
+        bottom: -120px;
+        right: -90px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.10);
+    }
+
+
+    .login-logo {
+        position: relative;
+
+        z-index: 2;
+
+        width: 90px;
+        height: 90px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin-bottom: 25px;
+
+        border-radius: 26px;
+
+        background: rgba(255, 255, 255, 0.18);
+
+        border: 1px solid rgba(255, 255, 255, 0.25);
+
+        box-shadow:
+            0 15px 35px rgba(0, 0, 0, 0.10);
+
+        font-size: 2.5rem;
+
+        backdrop-filter: blur(10px);
+    }
+
+
+    .login-visual h1 {
+        position: relative;
+
+        z-index: 2;
+
+        margin-bottom: 10px;
+
+        font-size: 2.5rem;
+
+        font-weight: 800;
+
+        letter-spacing: -1px;
+    }
+
+
+    .login-visual p {
+        position: relative;
+
+        z-index: 2;
+
+        max-width: 340px;
+
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.88);
+
+        text-align: center;
+
+        font-size: 1rem;
+
+        line-height: 1.7;
+    }
+
+
+    .wellness-points {
+        position: relative;
+
+        z-index: 2;
+
+        width: 100%;
+
+        max-width: 330px;
+
+        margin-top: 40px;
+    }
+
+
+    .wellness-point {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        margin-bottom: 15px;
+
+        padding: 12px 15px;
+
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.10);
+
+        border: 1px solid rgba(255, 255, 255, 0.10);
+
+        color: rgba(255, 255, 255, 0.95);
+
+        font-size: 0.88rem;
+    }
+
+
+    .wellness-point i {
+        width: 30px;
+        height: 30px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 9px;
+
+        background: rgba(255, 255, 255, 0.16);
+    }
+
+
+    /* =========================================
+       RIGHT SIDE
+    ========================================= */
+
+    .login-form-area {
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: center;
+
+        padding: 55px 65px;
+    }
+
+
+    .login-heading {
+        margin-bottom: 8px;
+
+        color: #17212b;
+
+        font-size: 2.2rem;
+
+        font-weight: 800;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    .login-subtitle {
+        margin-bottom: 35px;
+
+        color: #89969d;
+
+        font-size: 0.92rem;
+    }
+
+
+    /* =========================================
+       FORM
+    ========================================= */
+
+    .wellbot-form-group {
+        margin-bottom: 22px;
+    }
+
+
+    .wellbot-label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #44545c;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+    }
+
+
+    .wellbot-input-wrapper {
+        position: relative;
+    }
+
+
+    .wellbot-input-icon {
+        position: absolute;
+
+        top: 50%;
+        left: 15px;
+
+        z-index: 2;
+
+        transform: translateY(-50%);
+
+        color: #9aa9af;
+
+        font-size: 1rem;
+
+        pointer-events: none;
+    }
+
+
+    .wellbot-input {
+        min-height: 52px;
+
+        padding-left: 45px !important;
+
+        border: 1px solid #dce8eb !important;
+
+        border-radius: 13px !important;
+
+        background: #f9fcfd !important;
+
+        color: #26343a !important;
+
+        font-size: 0.92rem;
+
+        transition:
+            border 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+
+    .wellbot-input:focus {
+        border-color: #0dcaf0 !important;
+
+        background: white !important;
+
+        box-shadow:
+            0 0 0 4px
+            rgba(13, 202, 240, 0.10) !important;
+    }
+
+
+    .wellbot-input::placeholder {
+        color: #aab6bb;
+    }
+
+
+    /* =========================================
+       PASSWORD TOGGLE
+    ========================================= */
+
+    .password-toggle {
+        position: absolute;
+
+        top: 50%;
+        right: 14px;
+
+        z-index: 3;
+
+        transform: translateY(-50%);
+
+        border: none;
+
+        background: transparent;
+
+        color: #89969d;
+
+        cursor: pointer;
+
+        font-size: 1rem;
+    }
+
+
+    .password-toggle:hover {
+        color: #0aa7c7;
+    }
+
+
+    .password-input {
+        padding-right: 45px !important;
+    }
+
+
+    /* =========================================
+       REMEMBER ME
+    ========================================= */
+
+    .remember-row {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-top: 3px;
+
+        margin-bottom: 25px;
+    }
+
+
+    .remember-me {
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        color: #718087;
+
+        font-size: 0.82rem;
+
+        cursor: pointer;
+    }
+
+
+    .remember-me input {
+        width: 17px;
+        height: 17px;
+
+        border-color: #c9dadd;
+
+        cursor: pointer;
+    }
+
+
+    .remember-me input:checked {
+        background-color: #0dcaf0;
+
+        border-color: #0dcaf0;
+    }
+
+
+    .forgot-link {
+        color: #079bbd;
+
+        font-size: 0.82rem;
+
+        font-weight: 600;
+
+        text-decoration: none;
+
+        transition: 0.2s ease;
+    }
+
+
+    .forgot-link:hover {
+        color: #087f9f;
+
+        text-decoration: underline;
+    }
+
+
+    /* =========================================
+       LOGIN BUTTON
+    ========================================= */
+
+    .login-button {
+        width: 100%;
+
+        min-height: 54px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 9px;
+
+        border: none !important;
+
+        border-radius: 13px !important;
+
+        color: white !important;
+
+        background:
+            linear-gradient(
+                135deg,
+                #0dcaf0,
+                #079fbe
+            ) !important;
+
+        font-size: 0.95rem;
+
+        font-weight: 750;
+
+        box-shadow:
+            0 10px 25px
+            rgba(13, 202, 240, 0.22);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+
+    .login-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 15px 30px
+            rgba(13, 202, 240, 0.28);
+    }
+
+
+    .login-button:active {
+        transform: translateY(0);
+    }
+
+
+    /* =========================================
+       DIVIDER
+    ========================================= */
+
+    .login-divider {
+        display: flex;
+
+        align-items: center;
+
+        gap: 15px;
+
+        margin: 30px 0;
+
+        color: #a0adb2;
+
+        font-size: 0.75rem;
+    }
+
+
+    .login-divider::before,
+    .login-divider::after {
+        content: "";
+
+        height: 1px;
+
+        flex: 1;
+
+        background: #e5edef;
+    }
+
+
+    /* =========================================
+       REGISTER
+    ========================================= */
+
+    .register-box {
+        padding: 18px;
+
+        text-align: center;
+
+        border: 1px solid #e5edef;
+
+        border-radius: 14px;
+
+        background: #f8fcfd;
+
+        color: #7a898f;
+
+        font-size: 0.84rem;
+    }
+
+
+    .register-link {
+        margin-left: 4px;
+
+        color: #079fbe;
+
+        font-weight: 750;
+
+        text-decoration: none;
+    }
+
+
+    .register-link:hover {
+        color: #087f9f;
+
+        text-decoration: underline;
+    }
+
+
+    /* =========================================
+       SECURITY NOTE
+    ========================================= */
+
+    .security-note {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 6px;
+
+        margin-top: 22px;
+
+        color: #9aa7ac;
+
+        font-size: 0.72rem;
+    }
+
+
+    .security-note i {
+        color: #20b889;
+    }
+
+
+    /* =========================================
+       ERRORS
+    ========================================= */
+
+    .invalid-feedback {
+        padding-left: 4px;
+
+        font-size: 0.76rem;
+
+        font-weight: 600;
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 850px) {
+
+        .login-card {
+            grid-template-columns: 1fr;
+
+            max-width: 550px;
+        }
+
+
+        .login-visual {
+            min-height: auto;
+
+            padding: 40px 25px;
+        }
+
+
+        .login-visual h1 {
+            font-size: 2rem;
+        }
+
+
+        .wellness-points {
+            display: none;
+        }
+
+
+        .login-form-area {
+            padding: 40px 30px;
+        }
+
+    }
+
+
+    @media (max-width: 500px) {
+
+        .wellbot-login-page {
+            padding: 20px 12px;
+        }
+
+
+        .login-card {
+            border-radius: 20px;
+        }
+
+
+        .login-visual {
+            padding: 32px 20px;
+        }
+
+
+        .login-logo {
+            width: 70px;
+            height: 70px;
+
+            border-radius: 20px;
+
+            font-size: 2rem;
+        }
+
+
+        .login-visual h1 {
+            font-size: 1.8rem;
+        }
+
+
+        .login-form-area {
+            padding: 32px 22px;
+        }
+
+
+        .login-heading {
+            font-size: 1.8rem;
+        }
+
+
+        .remember-row {
+            align-items: flex-start;
+
+            gap: 10px;
+
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
+<div class="wellbot-login-page">
+
+    <div class="login-card">
+
+
+        <!-- =====================================
+             LEFT BRAND PANEL
+        ====================================== -->
+
+        <div class="login-visual">
+
+            <div class="login-logo">
+
+                <i class="bi bi-heart-pulse-fill"></i>
+
+            </div>
+
+
+            <h1>
+                Welcome to WellBot
+            </h1>
+
+
+            <p>
+                A calm space to reflect, learn,
+                and take care of your mental
+                wellbeing.
+            </p>
+
+
+            <div class="wellness-points">
+
+                <div class="wellness-point">
+
+                    <i class="bi bi-chat-heart-fill"></i>
+
+                    <span>
+                        Talk about how you're feeling
+                    </span>
+
+                </div>
+
+
+                <div class="wellness-point">
+
+                    <i class="bi bi-journal-text"></i>
+
+                    <span>
+                        Reflect through personal journaling
+                    </span>
+
+                </div>
+
+
+                <div class="wellness-point">
+
+                    <i class="bi bi-stars"></i>
+
+                    <span>
+                        Explore tools for better wellbeing
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================
+             LOGIN FORM
+        ====================================== -->
+
+        <div class="login-form-area">
+
+
+            <h2 class="login-heading">
+                Welcome back 👋
+            </h2>
+
+
+            <p class="login-subtitle">
+                Sign in to continue your wellbeing journey.
+            </p>
+
+
+            <form
+                method="POST"
+                action=""
+                novalidate
+            >
+
+                {{ form.hidden_tag() }}
+
+
+                <!-- EMAIL -->
+
+                <div class="wellbot-form-group">
+
+                    <label class="wellbot-label">
+
+                        {{ form.email.label.text }}
+
+                    </label>
+
+
+                    <div class="wellbot-input-wrapper">
+
+                        <i class="bi bi-envelope wellbot-input-icon"></i>
+
+
+                        {% if form.email.errors %}
+
+                            {{ form.email(
+                                class="form-control wellbot-input is-invalid",
+                                placeholder="Enter your email"
+                            ) }}
+
+                            {% for error in form.email.errors %}
+
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {{ form.email(
+                                class="form-control wellbot-input",
+                                placeholder="Enter your email"
+                            ) }}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="wellbot-form-group">
+
+                    <label class="wellbot-label">
+
+                        {{ form.password.label.text }}
+
+                    </label>
+
+
+                    <div class="wellbot-input-wrapper">
+
+                        <i class="bi bi-lock wellbot-input-icon"></i>
+
+
+                        {% if form.password.errors %}
+
+                            {{ form.password(
+                                class="form-control wellbot-input password-input is-invalid",
+                                placeholder="Enter your password",
+                                id="loginPassword"
+                            ) }}
+
+                            {% for error in form.password.errors %}
+
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {{ form.password(
+                                class="form-control wellbot-input password-input",
+                                placeholder="Enter your password",
+                                id="loginPassword"
+                            ) }}
+
+                        {% endif %}
+
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="togglePassword()"
+                            aria-label="Show password"
+                        >
+
+                            <i
+                                class="bi bi-eye"
+                                id="passwordIcon"
+                            ></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- REMEMBER / FORGOT -->
+
+                <div class="remember-row">
+
+                    <label class="remember-me">
+
+                        {{ form.remember_me(
+                            class="form-check-input"
+                        ) }}
+
+                        <span>
+                            Remember me
+                        </span>
+
+                    </label>
+
+
+                    <a
+                        class="forgot-link"
+                        href="{{ url_for('users.reset_request') }}"
+                    >
+
+                        Forgot password?
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- LOGIN -->
+
+                <div>
+
+                    {{ form.submit(
+                        class="btn login-button",
+                        value="Log In"
+                    ) }}
+
+                </div>
+
+            </form>
+
+
+
+            <!-- DIVIDER -->
+
+            <div class="login-divider">
+                OR
+            </div>
+
+
+
+            <!-- REGISTER -->
+
+            <div class="register-box">
+
+                Don't have an account?
+
+                <a
+                    class="register-link"
+                    href="{{ url_for('users.register') }}"
+                >
+                    Create one
+                </a>
+
+            </div>
+
+
+
+            <!-- SECURITY -->
+
+            <div class="security-note">
+
+                <i class="bi bi-shield-check"></i>
+
+                Your wellbeing journey starts here
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    function togglePassword() {
+
+        const password =
+            document.getElementById("loginPassword");
+
+        const icon =
+            document.getElementById("passwordIcon");
+
+
+        if (password.type === "password") {
+
+            password.type = "text";
+
+            icon.classList.remove("bi-eye");
+
+            icon.classList.add("bi-eye-slash");
+
+        } else {
+
+            password.type = "password";
+
+            icon.classList.remove("bi-eye-slash");
+
+            icon.classList.add("bi-eye");
+
+        }
+
+    }
+
+</script>
+
+
+{% endblock content %}

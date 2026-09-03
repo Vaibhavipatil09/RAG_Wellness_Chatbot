@@ -1,0 +1,5 @@
+#PyTorch 2.1.2
+#Transformers 4.35.2
+#Sentence Transformers 2.2.2
+
+#  3.10.11

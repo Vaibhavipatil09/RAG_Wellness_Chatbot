@@ -1,0 +1,176 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.sos-page{
+    min-height:calc(100vh - 72px);
+    padding:50px 20px;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(13,202,240,.12), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(32,201,151,.08), transparent 30%);
+}
+
+.sos-card{
+    max-width:1000px;
+    margin:auto;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(20px);
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 25px 70px rgba(31,67,77,.12);
+    border:1px solid rgba(220,235,239,.8);
+}
+
+.sos-header{
+    padding:60px 40px;
+    text-align:center;
+    color:#fff;
+    background:linear-gradient(135deg,#0dcaf0,#0799b8,#087f9f);
+}
+
+.sos-header i{
+    font-size:4rem;
+    margin-bottom:20px;
+}
+
+.sos-header h1{
+    font-weight:800;
+}
+
+.sos-header p{
+    opacity:.9;
+    max-width:700px;
+    margin:auto;
+}
+
+.sos-body{
+    padding:40px;
+}
+
+.helpline-card{
+    border:none;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:25px;
+    background:#f8fcfd;
+    transition:.25s;
+    border-left:6px solid #0dcaf0;
+}
+
+.helpline-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 30px rgba(13,202,240,.15);
+}
+
+.helpline-title{
+    color:#087f9f;
+    font-weight:700;
+}
+
+.helpline-number{
+    display:inline-block;
+    margin:15px 0;
+    padding:10px 18px;
+    border-radius:10px;
+    background:#0dcaf0;
+    color:#fff;
+    font-weight:700;
+    font-size:1.1rem;
+    text-decoration:none;
+}
+
+.note-box{
+    background:#fff8e6;
+    border-left:5px solid #ffc107;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:35px;
+}
+
+@media(max-width:768px){
+    .sos-header{
+        padding:40px 20px;
+    }
+
+    .sos-body{
+        padding:25px;
+    }
+}
+</style>
+
+<div class="sos-page">
+
+    <div class="sos-card">
+
+        <div class="sos-header">
+            <i class="bi bi-heart-pulse-fill"></i>
+
+            <h1>You're Not Alone</h1>
+
+            <p>
+                If you're feeling overwhelmed, anxious, hopeless, or in emotional
+                distress, help is available. Reach out to trained professionals
+                anytime.
+            </p>
+        </div>
+
+        <div class="sos-body">
+
+            <div class="note-box">
+                <strong>⚠ Emergency:</strong>
+                If you believe you or someone else is in immediate danger,
+                please call your local emergency services or go to the nearest
+                hospital immediately.
+            </div>
+
+            <div class="helpline-card">
+
+                <h3 class="helpline-title">
+                    <i class="bi bi-telephone-fill"></i>
+                    KIRAN Mental Health Helpline
+                </h3>
+
+                <a href="tel:18005990019" class="helpline-number">
+                    1800-599-0019
+                </a>
+
+                <p>
+                    24×7 toll-free national mental health helpline by the
+                    Ministry of Social Justice & Empowerment providing immediate
+                    support for emotional distress and suicide prevention.
+                </p>
+
+            </div>
+
+            <div class="helpline-card">
+
+                <h3 class="helpline-title">
+                    <i class="bi bi-chat-heart-fill"></i>
+                    iCALL – Free & Confidential Support
+                </h3>
+
+                <a href="tel:9152987821" class="helpline-number">
+                    +91 9152987821
+                </a>
+
+                <p>
+                    Professional multilingual counselling for stress, anxiety,
+                    depression, relationship concerns, and crisis intervention.
+                    Services are confidential and free.
+                </p>
+
+                <a class="btn btn-outline-info rounded-pill"
+                   href="https://icallhelpline.org/"
+                   target="_blank">
+                    Visit Website
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

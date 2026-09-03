@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        http-equiv="X-UA-Compatible"
+        content="ie=edge"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0dcaf0"
+    >
+
+    <title>
+        {{ title if title else "WellBot" }}
+    </title>
+
+
+    <!-- Bootstrap -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+        crossorigin="anonymous"
+    >
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+
+    <!-- Existing layout CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='styles/layout.css') }}"
+    >
+
+
+    {% block style %}
+    {% endblock style %}
+
+
+    {% block script %}
+    {% endblock script %}
+
+
+    <style>
+
+        /* ==================================================
+           GLOBAL
+        ================================================== */
+
+        :root {
+            --wellbot-primary: #0dcaf0;
+            --wellbot-primary-dark: #087f9f;
+            --wellbot-success: #20c997;
+            --wellbot-dark: #17212b;
+            --wellbot-text: #53636c;
+            --wellbot-muted: #89969d;
+            --wellbot-bg: #f6fafb;
+            --wellbot-border: #e3edf0;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 5% 10%,
+                    rgba(13, 202, 240, 0.06),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 95% 90%,
+                    rgba(32, 201, 151, 0.05),
+                    transparent 25%
+                ),
+                var(--wellbot-bg);
+
+            color: var(--wellbot-text);
+
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+
+        /* ==================================================
+           NAVBAR
+        ================================================== */
+
+        #navigation-bar {
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1030;
+
+            min-height: 72px;
+
+            background: rgba(255, 255, 255, 0.88) !important;
+
+            backdrop-filter: blur(18px);
+
+            -webkit-backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid
+                rgba(225, 235, 238, 0.8);
+
+            box-shadow:
+                0 5px 25px rgba(25, 60, 70, 0.05);
+        }
+
+
+        /* ==================================================
+           BRAND
+        ================================================== */
+
+        .wellbot-brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            text-decoration: none;
+
+            color: var(--wellbot-dark) !important;
+
+            font-size: 1.35rem;
+
+            font-weight: 800;
+
+            letter-spacing: -0.5px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .wellbot-brand:hover {
+            transform: translateY(-1px);
+        }
+
+
+        .wellbot-brand-icon {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 12px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--wellbot-primary),
+                    var(--wellbot-primary-dark)
+                );
+
+            box-shadow:
+                0 7px 18px
+                rgba(13, 202, 240, 0.25);
+
+            font-size: 1.2rem;
+        }
+
+
+        .wellbot-brand-text {
+            display: flex;
+
+            flex-direction: column;
+
+            line-height: 1;
+        }
+
+
+        .wellbot-brand-name {
+            font-size: 1.15rem;
+        }
+
+
+        .wellbot-brand-tagline {
+            margin-top: 4px;
+
+            color: var(--wellbot-muted);
+
+            font-size: 0.58rem;
+
+            font-weight: 600;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        /* ==================================================
+           NAVIGATION LINKS
+        ================================================== */
+
+        .wellbot-nav {
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+        }
+
+
+        .wellbot-nav-link {
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 9px 13px !important;
+
+            border-radius: 10px;
+
+            color: #64747c !important;
+
+            font-size: 0.88rem;
+
+            font-weight: 600;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .wellbot-nav-link:hover {
+            color: var(--wellbot-primary-dark) !important;
+
+            background: #edfaff;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* Active link */
+
+        .wellbot-nav-link.active {
+            color: var(--wellbot-primary-dark) !important;
+
+            background: #e8faff;
+
+            font-weight: 750;
+        }
+
+
+        .wellbot-nav-link.active::after {
+            content: "";
+
+            position: absolute;
+
+            bottom: 3px;
+
+            left: 50%;
+
+            width: 18px;
+
+            height: 2px;
+
+            transform: translateX(-50%);
+
+            border-radius: 5px;
+
+            background: var(--wellbot-primary);
+        }
+
+
+        /* ==================================================
+           SOS
+        ================================================== */
+
+        .sos-link {
+            display: flex !important;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 9px 15px !important;
+
+            color: white !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff5d6c,
+                    #dc3545
+                );
+
+            border-radius: 11px;
+
+            font-weight: 800 !important;
+
+            box-shadow:
+                0 5px 15px
+                rgba(220, 53, 69, 0.18);
+
+            transition: 0.2s ease;
+        }
+
+
+        .sos-link:hover {
+            color: white !important;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(220, 53, 69, 0.25);
+        }
+
+
+        /* ==================================================
+           ACCOUNT BUTTON
+        ================================================== */
+
+        .account-link {
+            display: flex !important;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+
+        .account-avatar {
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            color: var(--wellbot-primary-dark);
+
+            background: #e8faff;
+
+            font-size: 0.75rem;
+        }
+
+
+        /* ==================================================
+           LOGIN / REGISTER
+        ================================================== */
+
+        .login-link {
+            color: #62737c !important;
+        }
+
+
+        .register-link {
+            padding: 8px 14px !important;
+
+            color: white !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--wellbot-primary),
+                    #08a4c4
+                );
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 5px 14px
+                rgba(13, 202, 240, 0.18);
+        }
+
+
+        .register-link:hover {
+            color: white !important;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* ==================================================
+           MOBILE TOGGLER
+        ================================================== */
+
+        .wellbot-toggler {
+            padding: 8px 10px;
+
+            border: 1px solid #dcebef;
+
+            border-radius: 10px;
+
+            background: #f7fcfd;
+        }
+
+
+        .wellbot-toggler:focus {
+            box-shadow:
+                0 0 0 3px
+                rgba(13, 202, 240, 0.12);
+        }
+
+
+        /* ==================================================
+           FLASH TOAST
+        ================================================== */
+
+        .flash-container {
+            position: fixed;
+
+            top: 85px;
+
+            right: 20px;
+
+            z-index: 9999;
+
+            width: min(380px, calc(100vw - 30px));
+        }
+
+
+        .flash-toast {
+            overflow: hidden;
+
+            margin-bottom: 10px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background: white;
+
+            box-shadow:
+                0 15px 40px
+                rgba(20, 55, 65, 0.14);
+
+            animation:
+                flashIn 0.35s ease;
+        }
+
+
+        @keyframes flashIn {
+
+            from {
+                opacity: 0;
+
+                transform:
+                    translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateX(0);
+            }
+
+        }
+
+
+        .flash-content {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 14px 16px;
+        }
+
+
+        .flash-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            color: white;
+
+            font-size: 0.9rem;
+        }
+
+
+        .flash-message {
+            flex: 1;
+
+            color: #53636c;
+
+            font-size: 0.82rem;
+
+            font-weight: 600;
+
+            line-height: 1.4;
+        }
+
+
+        /* ==================================================
+           MAIN CONTENT
+        ================================================== */
+
+        main {
+            position: relative;
+        }
+
+
+        /* ==================================================
+           MOBILE
+        ================================================== */
+
+        @media (max-width: 991px) {
+
+            #navigation-bar {
+                min-height: 65px;
+            }
+
+
+            .navbar-collapse {
+                margin-top: 12px;
+
+                padding: 12px;
+
+                border: 1px solid var(--wellbot-border);
+
+                border-radius: 16px;
+
+                background:
+                    rgba(255, 255, 255, 0.97);
+
+                box-shadow:
+                    0 15px 35px
+                    rgba(30, 60, 70, 0.08);
+            }
+
+
+            .wellbot-nav {
+                display: flex;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 4px;
+            }
+
+
+            .wellbot-nav-link {
+                width: 100%;
+
+                justify-content: flex-start;
+
+                padding: 12px 14px !important;
+            }
+
+
+            .wellbot-nav-link.active::after {
+                display: none;
+            }
+
+
+            .sos-link,
+            .register-link {
+                justify-content: flex-start;
+
+                margin-top: 5px;
+            }
+
+        }
+
+
+        @media (max-width: 450px) {
+
+            .wellbot-brand-tagline {
+                display: none;
+            }
+
+
+            .wellbot-brand-name {
+                font-size: 1.05rem;
+            }
+
+
+            .wellbot-brand-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+
+            .flash-container {
+                right: 15px;
+
+                left: 15px;
+
+                width: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ==================================================
+         NAVIGATION
+    ================================================== -->
+
+    {% block navigation %}
+
+    <nav
+        id="navigation-bar"
+        class="navbar navbar-expand-lg"
+    >
+
+        <div class="container-fluid px-lg-4">
+
+
+            <!-- BRAND -->
+
+            <a
+                class="wellbot-brand navbar-brand"
+                href="{{ url_for('main.home') }}"
+            >
+
+                <span class="wellbot-brand-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+
+                <span class="wellbot-brand-text">
+
+                    <span class="wellbot-brand-name">
+                        WellBot
+                    </span>
+
+                    <span class="wellbot-brand-tagline">
+                        YOUR MENTAL WELLNESS COMPANION
+                    </span>
+
+                </span>
+
+            </a>
+
+
+            <!-- MOBILE BUTTON -->
+
+            <button
+                class="navbar-toggler wellbot-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <!-- NAVIGATION -->
+
+            <div
+                class="collapse navbar-collapse"
+                id="navbarNavDropdown"
+            >
+
+
+                <!-- LEFT -->
+
+                <ul class="navbar-nav wellbot-nav me-auto ms-lg-4">
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link"
+                            href="{{ url_for('chatbot.chat') }}"
+                        >
+
+                            <i class="bi bi-chat-heart"></i>
+
+                            Chat
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link"
+                            href="{{ url_for('journals.all_journals') }}"
+                        >
+
+                            <i class="bi bi-journal-text"></i>
+
+                            Journal
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link"
+                            href="{{ url_for('main.about') }}"
+                        >
+
+                            <i class="bi bi-info-circle"></i>
+
+                            About
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+
+                <!-- RIGHT -->
+
+                <ul class="navbar-nav wellbot-nav">
+
+
+                    <!-- SOS -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link sos-link"
+                            href="{{ url_for('main.sos') }}"
+                            onclick="return confirmSOS()"
+                        >
+
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+
+                            SOS
+
+                        </a>
+
+                    </li>
+
+
+                    {% if current_user.is_authenticated %}
+
+
+                    <!-- ACCOUNT -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link account-link"
+                            href="{{ url_for('users.account') }}"
+                        >
+
+                            <span class="account-avatar">
+
+                                <i class="bi bi-person-fill"></i>
+
+                            </span>
+
+                            Account
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- LOGOUT -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link"
+                            href="{{ url_for('users.logout') }}"
+                        >
+
+                            <i class="bi bi-box-arrow-right"></i>
+
+                            Logout
+
+                        </a>
+
+                    </li>
+
+
+                    {% else %}
+
+
+                    <!-- LOGIN -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link login-link"
+                            href="{{ url_for('users.login') }}"
+                        >
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+
+                            Login
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- REGISTER -->
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link wellbot-nav-link register-link"
+                            href="{{ url_for('users.register') }}"
+                        >
+
+                            <i class="bi bi-person-plus"></i>
+
+                            Register
+
+                        </a>
+
+                    </li>
+
+
+                    {% endif %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    {% endblock navigation %}
+
+
+
+    <!-- ==================================================
+         FLASH MESSAGES
+    ================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="flash-toast"
+                        role="alert"
+                    >
+
+                        <div class="flash-content">
+
+
+                            <div
+                                class="flash-icon
+                                {% if category == 'success' %}
+                                    bg-success
+                                {% elif category == 'danger' %}
+                                    bg-danger
+                                {% elif category == 'warning' %}
+                                    bg-warning text-dark
+                                {% else %}
+                                    bg-info
+                                {% endif %}"
+                            >
+
+                                {% if category == 'success' %}
+
+                                    <i class="bi bi-check-lg"></i>
+
+                                {% elif category == 'danger' %}
+
+                                    <i class="bi bi-exclamation-lg"></i>
+
+                                {% elif category == 'warning' %}
+
+                                    <i class="bi bi-exclamation-triangle"></i>
+
+                                {% else %}
+
+                                    <i class="bi bi-info-lg"></i>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="flash-message">
+                                {{ message }}
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                onclick="this.closest('.flash-toast').remove()"
+                            ></button>
+
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+
+    <!-- ==================================================
+         PAGE CONTENT
+    ================================================== -->
+
+    {% block content %}
+
+    {% endblock content %}
+
+
+
+    <!-- ==================================================
+         BOOTSTRAP JS
+    ================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"
+    ></script>
+
+
+
+    <!-- ==================================================
+         BOOTSTRAP POPOVERS
+    ================================================== -->
+
+    <script>
+
+        const popoverTriggerList =
+            document.querySelectorAll(
+                '[data-bs-toggle="popover"]'
+            );
+
+        const popoverList =
+            [...popoverTriggerList].map(
+                popoverTriggerEl =>
+                    new bootstrap.Popover(
+                        popoverTriggerEl
+                    )
+            );
+
+
+        /* =================================================
+           SOS CONFIRMATION
+        ================================================= */
+
+        function confirmSOS() {
+
+            return confirm(
+                "Are you sure you want to open the emergency support page?"
+            );
+
+        }
+
+
+        /* =================================================
+           AUTO HIDE FLASH MESSAGES
+        ================================================= */
+
+        setTimeout(() => {
+
+            const flashMessages =
+                document.querySelectorAll(
+                    ".flash-toast"
+                );
+
+            flashMessages.forEach(
+                (flash) => {
+
+                    flash.style.transition =
+                        "opacity 0.4s ease, transform 0.4s ease";
+
+                    flash.style.opacity = "0";
+
+                    flash.style.transform =
+                        "translateX(30px)";
+
+                    setTimeout(
+                        () => flash.remove(),
+                        400
+                    );
+
+                }
+            );
+
+        }, 5000);
+
+    </script>
+
+
+</body>
+
+</html>

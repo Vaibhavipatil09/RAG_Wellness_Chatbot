@@ -1,0 +1,1953 @@
+{% extends 'layout.html' %}
+
+{% block style %}
+
+<style>
+
+    /* =====================================================
+       GLOBAL
+    ====================================================== */
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #f4f9fb;
+    }
+
+    .wellbot-page {
+        height: calc(100vh - 0px);
+        min-height: 650px;
+
+        display: flex;
+
+        background:
+            radial-gradient(
+                circle at 10% 10%,
+                rgba(13, 202, 240, 0.08),
+                transparent 25%
+            ),
+            radial-gradient(
+                circle at 90% 90%,
+                rgba(32, 201, 151, 0.07),
+                transparent 25%
+            ),
+            #f7fbfc;
+
+        overflow: visible;
+    }
+
+
+    /* =====================================================
+       LEFT PROFILE PANEL
+    ====================================================== */
+
+    .wellbot-sidebar {
+        width: 300px;
+
+        flex-shrink: 0;
+
+        padding: 30px 22px;
+
+        background: rgba(255, 255, 255, 0.78);
+
+        backdrop-filter: blur(20px);
+
+        border-right: 1px solid #e5eef1;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        overflow-y: auto;
+
+        z-index: 10;
+    }
+
+
+    /* Logo */
+
+    .wellbot-logo {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 25px;
+
+        color: #17212b;
+
+        font-size: 1.45rem;
+
+        font-weight: 800;
+
+        letter-spacing: -0.5px;
+    }
+
+    .wellbot-logo-icon {
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 13px;
+
+        background: linear-gradient(
+            135deg,
+            #0dcaf0,
+            #087f9f
+        );
+
+        color: white;
+
+        font-size: 1.3rem;
+
+        box-shadow:
+            0 8px 20px rgba(13, 202, 240, 0.25);
+    }
+
+
+    /* Robot */
+
+    .wellbot-avatar-wrapper {
+        position: relative;
+
+        margin-bottom: 18px;
+    }
+
+    .wellbot-avatar {
+        width: 145px;
+        height: 145px;
+
+        object-fit: cover;
+
+        border-radius: 50%;
+
+        border: 6px solid white;
+
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, 0.13);
+
+        transition: 0.3s ease;
+    }
+
+    .wellbot-avatar:hover {
+        transform: translateY(-5px);
+    }
+
+
+    /* Online */
+
+    .online-badge {
+        position: absolute;
+
+        right: 5px;
+        bottom: 10px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        padding: 5px 9px;
+
+        background: white;
+
+        border-radius: 20px;
+
+        box-shadow:
+            0 5px 15px rgba(0, 0, 0, 0.12);
+
+        font-size: 0.68rem;
+
+        font-weight: 700;
+
+        color: #52616b;
+    }
+
+    .online-dot {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: #20c997;
+
+        box-shadow:
+            0 0 0 3px rgba(32, 201, 151, 0.15);
+    }
+
+
+    /* Name */
+
+    .wellbot-name {
+        margin: 0;
+
+        color: #17212b;
+
+        font-size: 1.5rem;
+
+        font-weight: 800;
+    }
+
+    .wellbot-tagline {
+        margin: 5px 0 25px;
+
+        color: #89969d;
+
+        font-size: 0.8rem;
+
+        text-align: center;
+    }
+
+
+    /* Sidebar buttons */
+
+    .sidebar-btn {
+        width: 100%;
+
+        margin-bottom: 10px;
+
+        padding: 12px 15px;
+
+        border-radius: 12px;
+
+        font-weight: 600;
+
+        text-align: left;
+
+        transition: 0.2s ease;
+
+        border: none;
+    }
+
+    .sidebar-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Match the sidebar buttons to the WellBot cyan theme
+       instead of plain Bootstrap info colors */
+
+    .wellbot-sidebar .btn-info.sidebar-btn {
+        color: #fff;
+
+        background: linear-gradient(135deg, #0dcaf0, #087f9f);
+
+        box-shadow: 0 10px 22px rgba(13, 202, 240, 0.25);
+    }
+
+    .wellbot-sidebar .btn-info.sidebar-btn:hover {
+        color: #fff;
+
+        box-shadow: 0 14px 28px rgba(13, 202, 240, 0.3);
+    }
+
+    .wellbot-sidebar .btn-outline-info.sidebar-btn {
+        color: #087f9f;
+
+        background: rgba(255, 255, 255, 0.6);
+
+        border: 1.5px solid rgba(13, 202, 240, 0.45);
+    }
+
+    .wellbot-sidebar .btn-outline-info.sidebar-btn:hover {
+        color: #fff;
+
+        background: linear-gradient(135deg, #0dcaf0, #087f9f);
+
+        border-color: transparent;
+    }
+
+
+    /* Developer */
+
+    .developer {
+        margin-top: auto;
+
+        padding-top: 25px;
+
+        text-align: center;
+
+        color: #99a5ab;
+
+        font-size: 0.68rem;
+
+        line-height: 1.6;
+    }
+
+    .developer strong {
+        display: block;
+
+        margin-top: 4px;
+
+        color: #65727a;
+
+        font-size: 0.7rem;
+    }
+
+
+    /* =====================================================
+       MAIN CHAT
+    ====================================================== */
+
+    .wellbot-chat {
+        flex: 1;
+
+        min-width: 0;
+
+        display: flex;
+
+        flex-direction: column;
+
+        position: relative;
+    }
+
+
+    /* Header */
+
+    .chat-header {
+        min-height: 72px;
+
+        padding: 12px 25px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        background: rgba(255, 255, 255, 0.85);
+
+        backdrop-filter: blur(15px);
+
+        border-bottom: 1px solid #e5eef1;
+
+        z-index: 5;
+    }
+
+    .chat-header-left {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+    }
+
+    .mini-avatar {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 50%;
+
+        object-fit: cover;
+
+        border: 2px solid #e2f7fb;
+    }
+
+    .chat-header-name {
+        margin: 0;
+
+        color: #17212b;
+
+        font-size: 1rem;
+
+        font-weight: 800;
+    }
+
+    .chat-header-status {
+        margin: 2px 0 0;
+
+        color: #20a779;
+
+        font-size: 0.7rem;
+    }
+
+
+    /* =====================================================
+       CHAT AREA
+    ====================================================== */
+
+    .main-chat {
+        flex: 1;
+
+        overflow-y: auto;
+
+        padding: 30px 6% 30px;
+
+        scroll-behavior: smooth;
+    }
+
+
+    /* Scrollbar */
+
+    .main-chat::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .main-chat::-webkit-scrollbar-thumb {
+        background: #c9dfe5;
+
+        border-radius: 10px;
+    }
+
+
+    /* Today */
+
+    .today-label {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        margin: 5px 0 25px;
+
+        color: #a0adb3;
+
+        font-size: 0.68rem;
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        letter-spacing: 1.5px;
+    }
+
+    .today-label::before,
+    .today-label::after {
+        content: "";
+
+        height: 1px;
+
+        flex: 1;
+
+        background: #e1eaed;
+    }
+
+
+    /* =====================================================
+       CHAT MESSAGE
+    ====================================================== */
+
+    .chat {
+        display: flex;
+
+        align-items: flex-end;
+
+        gap: 10px;
+
+        margin-bottom: 20px;
+
+        animation: messageIn 0.3s ease;
+    }
+
+    @keyframes messageIn {
+
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    .left-msg {
+        justify-content: flex-start;
+    }
+
+    .right-msg {
+        justify-content: flex-end;
+    }
+
+
+    .chat-image {
+        width: 38px;
+        height: 38px;
+
+        flex-shrink: 0;
+
+        object-fit: cover;
+
+        border-radius: 50%;
+
+        border: 2px solid white;
+
+        box-shadow:
+            0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+
+    .right-msg .chat-image {
+        order: 2;
+    }
+
+
+    /* Bubble */
+
+    .chat-bubble {
+        max-width: min(650px, 75%);
+
+        padding: 13px 17px;
+
+        border-radius: 18px;
+
+        background: white;
+
+        border: 1px solid #e8eff1;
+
+        box-shadow:
+            0 5px 20px rgba(30, 60, 70, 0.045);
+    }
+
+    .left-msg .chat-bubble {
+        border-bottom-left-radius: 5px;
+    }
+
+    .right-msg .chat-bubble {
+        border-bottom-right-radius: 5px;
+
+        background: linear-gradient(
+            135deg,
+            #0dcaf0,
+            #0798b8
+        );
+
+        border: none;
+
+        color: white;
+    }
+
+
+    /* Chat info */
+
+    .chat-info {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 6px;
+    }
+
+    .chat-info-name {
+        color: #52616b;
+
+        font-size: 0.7rem;
+
+        font-weight: 800;
+    }
+
+    .right-msg .chat-info-name {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .chat-info-time {
+        color: #a7b1b6;
+
+        font-size: 0.62rem;
+    }
+
+    .right-msg .chat-info-time {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+
+    .chat-text {
+        color: #52616b;
+
+        font-size: 0.9rem;
+
+        line-height: 1.65;
+
+        word-wrap: break-word;
+    }
+
+    .right-msg .chat-text {
+        color: white;
+    }
+
+
+    /* =====================================================
+       WELCOME CARD
+    ====================================================== */
+
+    .welcome-card {
+        max-width: 650px;
+
+        margin: 0 auto 25px;
+
+        padding: 25px;
+
+        text-align: center;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eafaff,
+                #ffffff
+            );
+
+        border: 1px solid #d8f0f5;
+
+        border-radius: 20px;
+    }
+
+    .welcome-icon {
+        width: 50px;
+        height: 50px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 12px;
+
+        border-radius: 15px;
+
+        color: white;
+
+        background: linear-gradient(
+            135deg,
+            #0dcaf0,
+            #087f9f
+        );
+
+        font-size: 1.4rem;
+    }
+
+    .welcome-card h3 {
+        margin-bottom: 8px;
+
+        color: #17212b;
+
+        font-size: 1.15rem;
+
+        font-weight: 800;
+    }
+
+    .welcome-card p {
+        margin: 0;
+
+        color: #74828a;
+
+        font-size: 0.8rem;
+
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       TYPING INDICATOR
+    ====================================================== */
+
+    .typing-wrapper {
+        display: none;
+
+        align-items: center;
+
+        gap: 9px;
+
+        margin: 0 0 15px 48px;
+    }
+
+    .typing-avatar {
+        width: 32px;
+        height: 32px;
+
+        border-radius: 50%;
+
+        object-fit: cover;
+    }
+
+    .typing-bubble {
+        display: flex;
+
+        align-items: center;
+
+        gap: 4px;
+
+        padding: 12px 15px;
+
+        background: white;
+
+        border: 1px solid #e8eff1;
+
+        border-radius: 15px;
+    }
+
+    .typing-dot {
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: #7c929b;
+
+        animation: typing 1.2s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes typing {
+
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+
+        30% {
+            transform: translateY(-4px);
+            opacity: 1;
+        }
+
+    }
+
+
+    /* =====================================================
+       BOTTOM INPUT AREA
+    ====================================================== */
+
+    .chat-bottom {
+        background: rgba(255, 255, 255, 0.92);
+
+        backdrop-filter: blur(15px);
+
+        border-top: 1px solid #e5eef1;
+
+        padding: 12px 6% 18px;
+    }
+
+
+    /* Quick suggestions */
+
+    .quick-prompts {
+        display: flex;
+
+        gap: 8px;
+
+        overflow-x: auto;
+
+        padding-bottom: 10px;
+
+        scrollbar-width: none;
+
+        position: relative;
+        z-index: 1;
+    }
+
+    .quick-prompts::-webkit-scrollbar {
+        display: none;
+    }
+
+    .quick-prompt {
+        flex-shrink: 0;
+
+        padding: 7px 12px;
+
+        border: 1px solid #dcebef;
+
+        border-radius: 20px;
+
+        background: #f7fcfd;
+
+        color: #55717b;
+
+        font-size: 0.72rem;
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+    }
+
+    .quick-prompt:hover {
+        color: #087f9f;
+
+        background: #e8faff;
+
+        border-color: #bceaf3;
+    }
+
+
+    /* Tools */
+
+    .tools {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 8px;
+
+        padding: 8px 0;
+
+        border: none !important;
+
+        overflow-x: auto;
+        overflow-y: visible;
+
+        position: relative;
+        z-index: 5000;
+    }
+
+    .tool-button {
+        border-radius: 10px !important;
+
+        font-size: 0.75rem !important;
+
+        font-weight: 600;
+    }
+
+
+    /* Input */
+
+    .chat-inputarea {
+        display: flex;
+
+        gap: 10px;
+
+        align-items: center;
+
+        padding: 5px;
+
+        background: #f5f9fa;
+
+        border: 1px solid #dce9ed;
+
+        border-radius: 16px;
+
+        transition: 0.2s ease;
+    }
+
+    .chat-inputarea:focus-within {
+        border-color: #0dcaf0;
+
+        box-shadow:
+            0 0 0 3px rgba(13, 202, 240, 0.10);
+    }
+
+    .chat-input {
+        flex: 1;
+
+        min-width: 0;
+
+        padding: 12px 15px;
+
+        border: none;
+
+        outline: none;
+
+        background: transparent;
+
+        color: #25343d;
+
+        font-size: 0.9rem;
+    }
+
+    .chat-input::placeholder {
+        color: #9aa8ae;
+    }
+
+    .send-button {
+        width: 48px;
+        height: 42px;
+
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+
+        border-radius: 11px;
+
+        color: white;
+
+        background: linear-gradient(
+            135deg,
+            #0dcaf0,
+            #0798b8
+        );
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+    }
+
+    .send-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 7px 18px rgba(13, 202, 240, 0.25);
+    }
+
+
+    /* Disclaimer */
+
+    .chat-disclaimer {
+        margin: 9px 0 0;
+
+        text-align: center;
+
+        color: #a0abb0;
+
+        font-size: 0.62rem;
+    }
+
+
+    /* =====================================================
+       DROPDOWN
+    ====================================================== */
+
+    .dropdown-menu {
+        border: none;
+
+        border-radius: 13px;
+
+        padding: 7px;
+
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, 0.12);
+
+        z-index: 3000 !important;
+    }
+
+    .dropdown-item {
+        border-radius: 8px;
+
+        padding: 9px 12px;
+
+        font-size: 0.78rem;
+    }
+
+    .dropdown-item:hover {
+        color: #087f9f;
+
+        background: #eafaff;
+    }
+
+
+    /* =====================================================
+       TOAST
+    ====================================================== */
+
+    .toast-container {
+        z-index: 9999;
+    }
+
+    .wellbot-toast {
+        border: none;
+
+        border-radius: 15px;
+
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, 0.15);
+
+        overflow: hidden;
+    }
+
+    .toast-icon {
+        width: 35px;
+        height: 35px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+
+        border-radius: 10px;
+
+        color: white;
+
+        background: #0dcaf0;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ====================================================== */
+
+    @media (max-width: 900px) {
+
+        .wellbot-sidebar {
+            width: 220px;
+
+            padding: 25px 15px;
+        }
+
+        .wellbot-avatar {
+            width: 110px;
+            height: 110px;
+        }
+
+        .chat-bubble {
+            max-width: 82%;
+        }
+
+        .main-chat {
+            padding-left: 4%;
+            padding-right: 4%;
+        }
+
+        .chat-bottom {
+            padding-left: 4%;
+            padding-right: 4%;
+        }
+
+    }
+
+
+    @media (max-width: 700px) {
+
+        .wellbot-page {
+            min-height: 100vh;
+        }
+
+        .wellbot-sidebar {
+            display: none;
+        }
+
+        .chat-header {
+            padding: 10px 15px;
+        }
+
+        .main-chat {
+            padding: 20px 15px;
+        }
+
+        .chat-bottom {
+            padding: 10px 12px 14px;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+        }
+
+        .chat-text {
+            font-size: 0.85rem;
+        }
+
+        .quick-prompts {
+            margin-bottom: 2px;
+        }
+
+    }
+
+</style>
+
+{% endblock style %}
+
+
+{% block content %}
+
+<div class="wellbot-page">
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside class="wellbot-sidebar">
+
+        <div class="wellbot-logo">
+
+            <div class="wellbot-logo-icon">
+                ♡
+            </div>
+
+            WellBot
+
+        </div>
+
+
+        <!-- Avatar -->
+
+        <div class="wellbot-avatar-wrapper">
+
+            <img
+                src="{{ url_for('static', filename='images/chatbot.png') }}"
+                alt="WellBot"
+                class="wellbot-avatar"
+            >
+
+            <div class="online-badge">
+                <span class="online-dot"></span>
+                Online
+            </div>
+
+        </div>
+
+
+        <h2 class="wellbot-name">
+            WellBot
+        </h2>
+
+        <p class="wellbot-tagline">
+            Your Mental Wellness Companion
+        </p>
+
+
+        <!-- About -->
+
+        <a
+            href="{{ url_for('main.about') }}"
+            class="btn btn-outline-info sidebar-btn"
+        >
+            🤖 About WellBot
+        </a>
+
+
+        <!-- Help -->
+
+        <button
+            type="button"
+            class="btn btn-info sidebar-btn"
+            data-bs-toggle="toast"
+            onclick="showHelpToast()"
+        >
+            💡 How can I use WellBot?
+        </button>
+
+
+        <!-- Subject -->
+
+        <button
+            type="button"
+            class="btn btn-outline-info sidebar-btn"
+            onclick="showSubjectToast()"
+        >
+            📚 What can I talk about?
+        </button>
+
+
+        <div class="developer">
+
+            Developed with care by
+
+            <strong>
+                Vaibhavi Patil
+            </strong>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =================================================
+         CHAT APPLICATION
+    ================================================== -->
+
+    <section class="wellbot-chat">
+
+
+        <!-- Header -->
+
+        <header class="chat-header">
+
+            <div class="chat-header-left">
+
+                <img
+                    src="{{ url_for('static', filename='images/chatbot.png') }}"
+                    class="mini-avatar"
+                    alt="WellBot"
+                >
+
+                <div>
+
+                    <h1 class="chat-header-name">
+                        WellBot
+                    </h1>
+
+                    <p class="chat-header-status">
+                        ● Online · Ready to listen
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="btn btn-sm btn-light rounded-circle"
+                onclick="showHelpToast()"
+                title="Help"
+            >
+                ?
+            </button>
+
+        </header>
+
+
+        <!-- =================================================
+             CHAT
+        ================================================== -->
+
+        <main
+            id="main-chat"
+            class="main-chat"
+        >
+
+
+            {% if current_user.is_authenticated and messages %}
+
+                {% for message in messages %}
+
+                    {% if message.sender == 'user' %}
+
+                    <!-- USER MESSAGE -->
+
+                    <div class="chat right-msg">
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='profile_images/' + current_user.profile_image
+                            ) }}"
+                            class="chat-image"
+                            alt="You"
+                        >
+
+                        <div class="chat-bubble">
+
+                            <div class="chat-info">
+
+                                <div class="chat-info-name">
+                                    You
+                                </div>
+
+                                <div class="chat-info-time">
+                                    {{ message.timestamp.strftime('%d/%m/%Y, %H:%M') }}
+                                </div>
+
+                            </div>
+
+                            <div class="chat-text">
+                                {{ message.message }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% else %}
+
+                    <!-- BOT MESSAGE -->
+
+                    <div class="chat left-msg">
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='images/chatbot.png'
+                            ) }}"
+                            class="chat-image"
+                            alt="WellBot"
+                        >
+
+                        <div class="chat-bubble">
+
+                            <div class="chat-info">
+
+                                <div class="chat-info-name">
+                                    WellBot
+                                </div>
+
+                                <div class="chat-info-time">
+                                    {{ message.timestamp.strftime('%d/%m/%Y, %H:%M') }}
+                                </div>
+
+                            </div>
+
+                            <div class="chat-text">
+                                {{ message.message }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+                <div class="today-label">
+                    Previous messages
+                </div>
+
+            {% endif %}
+
+
+            <!-- TODAY -->
+
+            <div class="today-label">
+                Today
+            </div>
+
+
+            <!-- Welcome Card -->
+
+            <div class="welcome-card">
+
+                <div class="welcome-icon">
+                    ♡
+                </div>
+
+                <h3>
+                    Welcome to WellBot
+                </h3>
+
+                <p>
+                    I'm here to help you explore mental wellness,
+                    learn about mental health, and have a supportive
+                    conversation.
+                </p>
+
+            </div>
+
+
+            <!-- Welcome message -->
+
+            <div class="chat left-msg">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/chatbot.png'
+                    ) }}"
+                    class="chat-image"
+                    alt="WellBot"
+                >
+
+                <div class="chat-bubble">
+
+                    <div class="chat-info">
+
+                        <div class="chat-info-name">
+                            WellBot
+                        </div>
+
+                        <div class="chat-info-time">
+                            Now
+                        </div>
+
+                    </div>
+
+
+                    <div class="chat-text">
+
+                        {% if current_user.is_authenticated %}
+
+                            Hi
+                            <strong>
+                                {{ current_user.username }}
+                            </strong>! 👋
+
+                            <br><br>
+
+                            Welcome back to WellBot.
+
+                            Tell me what's on your mind,
+                            or choose a topic below to get started.
+
+                        {% else %}
+
+                            Hi there! 👋
+
+                            <br><br>
+
+                            Welcome to WellBot.
+
+                            You can ask me about mental health,
+                            stress, anxiety, mindfulness,
+                            self-care and more.
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Disclaimer -->
+
+            <div
+                class="alert alert-light border-0 text-center mt-4"
+                style="
+                    max-width: 650px;
+                    margin-left: auto;
+                    margin-right: auto;
+                    font-size: 0.72rem;
+                    color: #8b989e;
+                    background: rgba(255,255,255,0.7);
+                    border-radius: 12px;
+                "
+            >
+
+                💙 WellBot provides general information and support.
+                It is not a replacement for professional mental health care.
+
+            </div>
+
+
+            <!-- Typing indicator -->
+
+            <div
+                id="typingIndicator"
+                class="typing-wrapper"
+            >
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/chatbot.png'
+                    ) }}"
+                    class="typing-avatar"
+                    alt="WellBot"
+                >
+
+                <div class="typing-bubble">
+
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+
+                </div>
+
+            </div>
+
+
+        </main>
+
+
+        <!-- =================================================
+             INPUT SECTION
+        ================================================== -->
+
+        <div class="chat-bottom">
+
+
+            <!-- Quick prompts -->
+
+            <div class="quick-prompts">
+
+                <button
+                    class="quick-prompt"
+                    onclick="usePrompt('What is mental health?')"
+                >
+                    🧠 What is mental health?
+                </button>
+
+                <button
+                    class="quick-prompt"
+                    onclick="usePrompt('How can I manage stress?')"
+                >
+                    🌿 Manage stress
+                </button>
+
+                <button
+                    class="quick-prompt"
+                    onclick="usePrompt('What is anxiety?')"
+                >
+                    💭 What is anxiety?
+                </button>
+
+                <button
+                    class="quick-prompt"
+                    onclick="usePrompt('Tell me about mindfulness')"
+                >
+                    🧘 Mindfulness
+                </button>
+
+                <button
+                    class="quick-prompt"
+                    onclick="usePrompt('How can I improve my sleep?')"
+                >
+                    😴 Better sleep
+                </button>
+
+            </div>
+
+
+            <!-- Tools -->
+
+            <div class="tools">
+
+
+                <!-- Topics -->
+
+                <div class="btn-group dropup">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-info tool-button dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                    >
+                        📚 Topics
+                    </button>
+
+                    <ul class="dropdown-menu">
+
+                        {% for topic in topics.topics %}
+
+                        <li>
+
+                            <button
+                                class="dropdown-item"
+                                onclick="responseTopic('{{ topic.title }}')"
+                            >
+                                {{ topic.title }}
+                            </button>
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+
+                <!-- Tests -->
+
+                <div class="btn-group dropup">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-info tool-button dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                    >
+                        📝 Tests
+                    </button>
+
+                    <ul class="dropdown-menu">
+
+                        {% for test in tests.tests %}
+
+                        <li>
+
+                            <button
+                                class="dropdown-item"
+                                onclick="responseTest('{{ test.title }}')"
+                            >
+                                {{ test.title }}
+                            </button>
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+
+                <!-- Mindfulness -->
+
+                <div class="btn-group dropup">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-success tool-button dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                    >
+                        🧘 Mindfulness
+                    </button>
+
+                    <ul class="dropdown-menu">
+
+                        {% for exercise in mindfulness_exercises.mindfulness_exercises %}
+
+                        <li>
+
+                            <button
+                                class="dropdown-item"
+                                onclick="responseExercise('{{ exercise.title }}')"
+                            >
+                                {{ exercise.title }}
+                            </button>
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <!-- Input -->
+
+            <form
+                id="message-form"
+                class="chat-inputarea"
+                image_file="{{ current_user.profile_image if current_user.is_authenticated else 'default.jpg' }}"
+            >
+
+                <input
+                    type="text"
+                    class="chat-input"
+                    id="textInput"
+                    autocomplete="off"
+                    placeholder="Talk to WellBot..."
+                >
+
+                <button
+                    type="submit"
+                    class="send-button"
+                    title="Send message"
+                >
+                    ➤
+                </button>
+
+            </form>
+
+
+            <p class="chat-disclaimer">
+                WellBot is an AI chatbot and cannot replace professional care.
+            </p>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST CONTAINER
+====================================================== -->
+
+<div
+    class="toast-container position-fixed top-0 end-0 p-3"
+>
+
+    <!-- Help Toast -->
+
+    <div
+        id="helpToast"
+        class="toast wellbot-toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+
+        <div class="toast-header">
+
+            <div class="toast-icon me-2">
+                💡
+            </div>
+
+            <strong class="me-auto">
+                How to use WellBot
+            </strong>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="toast"
+            ></button>
+
+        </div>
+
+        <div class="toast-body">
+
+            Start by saying hello or asking a question.
+
+            <br><br>
+
+            You can also use the
+            <strong>Topics</strong>,
+            <strong>Tests</strong>, and
+            <strong>Mindfulness</strong>
+            buttons below the chat.
+
+            <br><br>
+
+            <small class="text-muted">
+                Tip: Try asking "How can I manage stress?"
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- Subject Toast -->
+
+    <div
+        id="subjectToast"
+        class="toast wellbot-toast mt-2"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+
+        <div class="toast-header">
+
+            <div class="toast-icon me-2">
+                🧠
+            </div>
+
+            <strong class="me-auto">
+                WellBot Topics
+            </strong>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="toast"
+            ></button>
+
+        </div>
+
+        <div class="toast-body">
+
+            Mental Health · Addiction · Anxiety · Depression
+            · Disorders · Feelings · Loneliness · Meditation
+            · Mindfulness · Personal Growth · Phobia ·
+            Self-care · Sleep · Stress · Trauma and more.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+    /* ==========================================
+       AUTO SCROLL
+    =========================================== */
+
+    const chat = document.getElementById("main-chat");
+
+    function scrollChat() {
+
+        if (chat) {
+
+            chat.scrollTo({
+                top: chat.scrollHeight,
+                behavior: "smooth"
+            });
+
+        }
+
+    }
+
+    setTimeout(scrollChat, 100);
+
+
+    /* ==========================================
+       QUICK PROMPTS
+    =========================================== */
+
+    function usePrompt(text) {
+
+        const input = document.getElementById("textInput");
+
+        if (!input) return;
+
+        input.value = text;
+
+        input.focus();
+
+        showMessageToast("Ready to send", text);
+
+    }
+
+
+    /* ==========================================
+       HELP TOAST
+    =========================================== */
+
+    function showHelpToast() {
+
+        const toastElement =
+            document.getElementById("helpToast");
+
+        const toast =
+            bootstrap.Toast.getOrCreateInstance(
+                toastElement,
+                {
+                    delay: 7000
+                }
+            );
+
+        toast.show();
+
+    }
+
+
+    /* ==========================================
+       SUBJECT TOAST
+    =========================================== */
+
+    function showSubjectToast() {
+
+        const toastElement =
+            document.getElementById("subjectToast");
+
+        const toast =
+            bootstrap.Toast.getOrCreateInstance(
+                toastElement,
+                {
+                    delay: 8000
+                }
+            );
+
+        toast.show();
+
+    }
+
+
+    /* ==========================================
+       MESSAGE TOAST
+    =========================================== */
+
+    function showMessageToast(title, message) {
+
+        /*
+         * Small browser notification.
+         * Does not interfere with your chat.
+         */
+
+        console.log(title + ": " + message);
+
+    }
+
+
+    /* ==========================================
+       TYPING INDICATOR
+    =========================================== */
+
+    function showTyping() {
+
+        const indicator =
+            document.getElementById("typingIndicator");
+
+        if (indicator) {
+
+            indicator.style.display = "flex";
+
+            scrollChat();
+
+        }
+
+    }
+
+
+    function hideTyping() {
+
+        const indicator =
+            document.getElementById("typingIndicator");
+
+        if (indicator) {
+
+            indicator.style.display = "none";
+
+        }
+
+    }
+
+
+    /* ==========================================
+       ENTER TO SEND
+    =========================================== */
+
+    const input =
+        document.getElementById("textInput");
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    const form =
+                        document.getElementById(
+                            "message-form"
+                        );
+
+                    if (form) {
+
+                        form.requestSubmit();
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ==========================================
+       FOCUS INPUT
+    =========================================== */
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            if (input) {
+
+                input.focus();
+
+            }
+
+            scrollChat();
+
+        }
+    );
+
+</script>
+
+
+{% include "chat/send_function.html" %}
+
+{% endblock content %}

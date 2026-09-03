@@ -1,0 +1,285 @@
+```html
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.account-page{
+    min-height:calc(100vh - 72px);
+    padding:50px 20px;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(13,202,240,.12), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(32,201,151,.08), transparent 30%);
+}
+
+.account-card{
+    max-width:1000px;
+    margin:auto;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-radius:28px;
+    overflow:hidden;
+    border:1px solid rgba(220,235,239,.8);
+    box-shadow:0 25px 70px rgba(31,67,77,.12);
+}
+
+.account-header{
+    background:linear-gradient(135deg,#0dcaf0,#0799b8,#087f9f);
+    color:#fff;
+    padding:40px;
+}
+
+.profile-image{
+    width:170px;
+    height:170px;
+    object-fit:cover;
+    border-radius:22px;
+    border:5px solid rgba(255,255,255,.95);
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+}
+
+.profile-name{
+    font-size:2rem;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.profile-email{
+    color:rgba(255,255,255,.9);
+}
+
+.profile-id{
+    font-size:.9rem;
+    opacity:.85;
+}
+
+.account-body{
+    padding:40px;
+}
+
+.form-label{
+    font-weight:700;
+    color:#44545c;
+}
+
+.form-control{
+    min-height:52px;
+    border-radius:14px;
+    border:1px solid #dce8eb;
+    background:#f9fcfd;
+}
+
+.form-control:focus{
+    border-color:#0dcaf0;
+    box-shadow:0 0 0 4px rgba(13,202,240,.1);
+}
+
+.btn-theme{
+    background:linear-gradient(135deg,#0dcaf0,#0799b8);
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:12px 20px;
+    font-weight:700;
+}
+
+.btn-theme:hover{
+    color:#fff;
+    transform:translateY(-2px);
+}
+
+.action-btn{
+    border-radius:12px;
+}
+
+.section-title{
+    font-size:1.5rem;
+    font-weight:800;
+    color:#17212b;
+    margin-bottom:25px;
+}
+
+@media(max-width:768px){
+
+    .account-header{
+        text-align:center;
+    }
+
+    .profile-image{
+        margin-bottom:20px;
+    }
+
+    .account-body{
+        padding:25px;
+    }
+
+}
+</style>
+
+<div class="account-page">
+
+    <div class="account-card">
+
+        <div class="account-header">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-3 text-center">
+                    <img
+                        src="{{ url_for('static', filename='profile_images/' + current_user.profile_image) }}"
+                        class="profile-image"
+                        alt="Profile Image">
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="profile-id">
+                        User #{{ current_user.id }}
+                    </div>
+
+                    <div class="profile-name">
+                        {{ current_user.username }}
+                    </div>
+
+                    <div class="profile-email">
+                        {{ current_user.email }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-3 mt-4 mt-md-0">
+
+                    <form action="{{ url_for('users.delete_conversation') }}" method="POST" class="mb-2">
+                        <button class="btn btn-outline-light w-100 action-btn">
+                            <i class="bi bi-chat-left-text"></i>
+                            Delete Conversation
+                        </button>
+                    </form>
+
+                    <button
+                        class="btn btn-danger w-100 action-btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">
+                        <i class="bi bi-trash"></i>
+                        Delete Account
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="account-body">
+
+            <h3 class="section-title">
+                <i class="bi bi-person-lines-fill"></i>
+                Account Information
+            </h3>
+
+            <form method="POST" enctype="multipart/form-data">
+
+                {{ form.hidden_tag() }}
+
+                <div class="mb-4">
+                    {{ form.username.label(class="form-label") }}
+
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control is-invalid") }}
+                        {% for error in form.username.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.username(class="form-control") }}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.email.label(class="form-label") }}
+
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control is-invalid") }}
+                        {% for error in form.email.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {{ form.email(class="form-control") }}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.picture.label(class="form-label") }}
+                    {{ form.picture(class="form-control") }}
+
+                    {% if form.picture.errors %}
+                        {% for error in form.picture.errors %}
+                            <div class="text-danger mt-2">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                {{ form.submit(class="btn btn-theme") }}
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Delete Account Modal -->
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Delete Account?
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to permanently delete your account? This action cannot be undone.
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <form action="{{ url_for('users.delete_account') }}" method="POST">
+                    <button class="btn btn-danger">
+                        Delete Account
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}
+```

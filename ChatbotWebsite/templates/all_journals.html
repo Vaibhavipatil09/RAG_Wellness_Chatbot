@@ -1,0 +1,209 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.journal-page{
+    min-height:calc(100vh - 72px);
+    padding:45px 20px;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(13,202,240,.10), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(32,201,151,.08), transparent 30%);
+}
+
+.page-title{
+    font-size:2.2rem;
+    font-weight:800;
+    color:#17212b;
+}
+
+.add-btn{
+    background:linear-gradient(135deg,#0dcaf0,#0799b8);
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:12px 28px;
+    font-weight:700;
+    box-shadow:0 10px 25px rgba(13,202,240,.25);
+}
+
+.add-btn:hover{
+    color:#fff;
+    transform:translateY(-2px);
+}
+
+.journal-card{
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(18px);
+    border-radius:22px;
+    border:1px solid rgba(220,235,239,.8);
+    box-shadow:0 20px 45px rgba(31,67,77,.10);
+    transition:.25s;
+}
+
+.journal-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 28px 60px rgba(13,202,240,.18);
+}
+
+.mood-title{
+    color:#087f9f;
+    font-weight:700;
+    text-decoration:none;
+}
+
+.mood-title:hover{
+    color:#0dcaf0;
+}
+
+.journal-text{
+    color:#5f6c72;
+    line-height:1.7;
+}
+
+.avatar{
+    width:55px;
+    height:55px;
+    object-fit:cover;
+    border-radius:50%;
+}
+
+.view-btn{
+    border-radius:12px;
+}
+
+.pagination .btn{
+    border-radius:10px;
+}
+</style>
+
+<div class="journal-page">
+
+<div class="container">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="page-title">
+        <i class="bi bi-journal-bookmark-fill text-info"></i>
+        My Journals
+    </h2>
+
+    <a class="btn add-btn"
+       href="{{ url_for('journals.new_journal') }}">
+        <i class="bi bi-plus-circle"></i>
+        Add Journal
+    </a>
+
+</div>
+
+<div class="text-end mb-4">
+
+{% for page_num in journals.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=1) %}
+
+    {% if page_num %}
+
+        {% if journals.page == page_num %}
+
+        <a href="{{ url_for('journals.all_journals',page=page_num) }}"
+           class="btn btn-info text-white">
+            {{ page_num }}
+        </a>
+
+        {% else %}
+
+        <a href="{{ url_for('journals.all_journals',page=page_num) }}"
+           class="btn btn-outline-info">
+            {{ page_num }}
+        </a>
+
+        {% endif %}
+
+    {% else %}
+
+        ...
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+{% for journal in journals.items %}
+
+<div class="card journal-card mb-4">
+
+<div class="card-body p-4">
+
+<h4>
+
+Feeling
+
+<a class="mood-title"
+href="{{ url_for('journals.journal',journal_id=journal.id) }}">
+
+{{ journal.mood }}
+
+</a>
+
+<span class="text-muted fs-6">
+
+on {{ journal.timestamp.strftime('%d %b %Y') }}
+
+</span>
+
+</h4>
+
+<p class="journal-text text-truncate mt-3">
+
+{{ journal.content }}
+
+</p>
+
+<hr>
+
+<div class="d-flex align-items-center">
+
+<img
+src="{{ url_for('static',filename='profile_images/'+current_user.profile_image) }}"
+class="avatar me-3">
+
+<div class="flex-grow-1">
+
+<strong>
+
+{{ journal.user.username }}
+
+</strong>
+
+<br>
+
+<small class="text-muted">
+
+{{ journal.timestamp.strftime('%d/%m/%Y, %A, %H:%M') }}
+
+</small>
+
+</div>
+
+<a
+href="{{ url_for('journals.journal',journal_id=journal.id) }}"
+class="btn btn-outline-info view-btn">
+
+<i class="bi bi-eye"></i>
+
+View
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock content %}

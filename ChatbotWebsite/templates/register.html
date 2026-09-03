@@ -1,0 +1,1034 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<style>
+
+    /* =========================================
+       REGISTER PAGE
+    ========================================= */
+
+    .wellbot-register-page {
+        min-height: calc(100vh - 72px);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 45px 20px;
+
+        background:
+            radial-gradient(
+                circle at 90% 15%,
+                rgba(13, 202, 240, 0.10),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 5% 85%,
+                rgba(32, 201, 151, 0.08),
+                transparent 30%
+            );
+    }
+
+
+    /* =========================================
+       MAIN CARD
+    ========================================= */
+
+    .register-card {
+        width: 100%;
+
+        max-width: 1050px;
+
+        display: grid;
+
+        grid-template-columns: 1.1fr 0.9fr;
+
+        overflow: hidden;
+
+        border: 1px solid rgba(220, 235, 239, 0.8);
+
+        border-radius: 28px;
+
+        background: rgba(255, 255, 255, 0.94);
+
+        box-shadow:
+            0 25px 70px rgba(31, 67, 77, 0.12);
+
+        backdrop-filter: blur(20px);
+
+        -webkit-backdrop-filter: blur(20px);
+
+        animation: registerCardIn 0.55s ease;
+    }
+
+
+    @keyframes registerCardIn {
+
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    /* =========================================
+       FORM AREA
+    ========================================= */
+
+    .register-form-area {
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: center;
+
+        padding: 50px 60px;
+    }
+
+
+    .register-heading {
+        margin-bottom: 8px;
+
+        color: #17212b;
+
+        font-size: 2.2rem;
+
+        font-weight: 800;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    .register-subtitle {
+        margin-bottom: 30px;
+
+        color: #89969d;
+
+        font-size: 0.92rem;
+
+        line-height: 1.5;
+    }
+
+
+    /* =========================================
+       FORM
+    ========================================= */
+
+    .wellbot-form-group {
+        margin-bottom: 19px;
+    }
+
+
+    .wellbot-label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #44545c;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+    }
+
+
+    .wellbot-input-wrapper {
+        position: relative;
+    }
+
+
+    .wellbot-input-icon {
+        position: absolute;
+
+        top: 50%;
+        left: 15px;
+
+        z-index: 2;
+
+        transform: translateY(-50%);
+
+        color: #9aa9af;
+
+        pointer-events: none;
+    }
+
+
+    .wellbot-input {
+        min-height: 50px;
+
+        padding-left: 44px !important;
+
+        border: 1px solid #dce8eb !important;
+
+        border-radius: 13px !important;
+
+        background: #f9fcfd !important;
+
+        color: #26343a !important;
+
+        font-size: 0.9rem;
+
+        transition:
+            border 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+
+    .wellbot-input:focus {
+        border-color: #0dcaf0 !important;
+
+        background: white !important;
+
+        box-shadow:
+            0 0 0 4px
+            rgba(13, 202, 240, 0.10) !important;
+    }
+
+
+    .wellbot-input::placeholder {
+        color: #aab6bb;
+    }
+
+
+    /* =========================================
+       PASSWORD TOGGLE
+    ========================================= */
+
+    .password-toggle {
+        position: absolute;
+
+        top: 50%;
+        right: 14px;
+
+        z-index: 3;
+
+        transform: translateY(-50%);
+
+        border: none;
+
+        background: transparent;
+
+        color: #89969d;
+
+        cursor: pointer;
+
+        font-size: 1rem;
+    }
+
+
+    .password-toggle:hover {
+        color: #079fbe;
+    }
+
+
+    .password-input {
+        padding-right: 45px !important;
+    }
+
+
+    /* =========================================
+       REGISTER BUTTON
+    ========================================= */
+
+    .register-button {
+        width: 100%;
+
+        min-height: 54px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 9px;
+
+        margin-top: 5px;
+
+        border: none !important;
+
+        border-radius: 13px !important;
+
+        color: white !important;
+
+        background:
+            linear-gradient(
+                135deg,
+                #0dcaf0,
+                #079fbe
+            ) !important;
+
+        font-size: 0.95rem;
+
+        font-weight: 750;
+
+        box-shadow:
+            0 10px 25px
+            rgba(13, 202, 240, 0.22);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+
+    .register-button:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 15px 30px
+            rgba(13, 202, 240, 0.28);
+    }
+
+
+    .register-button:active {
+        transform: translateY(0);
+    }
+
+
+    /* =========================================
+       LOGIN BOX
+    ========================================= */
+
+    .login-box {
+        margin-top: 24px;
+
+        padding: 17px;
+
+        text-align: center;
+
+        border: 1px solid #e5edef;
+
+        border-radius: 14px;
+
+        background: #f8fcfd;
+
+        color: #7a898f;
+
+        font-size: 0.84rem;
+    }
+
+
+    .login-link {
+        margin-left: 4px;
+
+        color: #079fbe;
+
+        font-weight: 750;
+
+        text-decoration: none;
+    }
+
+
+    .login-link:hover {
+        color: #087f9f;
+
+        text-decoration: underline;
+    }
+
+
+    /* =========================================
+       SECURITY
+    ========================================= */
+
+    .security-note {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 6px;
+
+        margin-top: 18px;
+
+        color: #9aa7ac;
+
+        font-size: 0.72rem;
+    }
+
+
+    .security-note i {
+        color: #20b889;
+    }
+
+
+    /* =========================================
+       RIGHT VISUAL
+    ========================================= */
+
+    .register-visual {
+        position: relative;
+
+        min-height: 620px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 45px;
+
+        overflow: hidden;
+
+        color: white;
+
+        background:
+            linear-gradient(
+                145deg,
+                #087f9f,
+                #079fbe 55%,
+                #0dcaf0
+            );
+    }
+
+
+    .register-visual::before {
+        content: "";
+
+        position: absolute;
+
+        width: 330px;
+        height: 330px;
+
+        top: -140px;
+        right: -100px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.09);
+    }
+
+
+    .register-visual::after {
+        content: "";
+
+        position: absolute;
+
+        width: 270px;
+        height: 270px;
+
+        bottom: -130px;
+        left: -100px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.10);
+    }
+
+
+    .register-image-wrapper {
+        position: relative;
+
+        z-index: 2;
+
+        width: 230px;
+        height: 230px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin-bottom: 28px;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.14);
+
+        border: 1px solid rgba(255, 255, 255, 0.20);
+
+        box-shadow:
+            0 20px 45px rgba(0, 0, 0, 0.12);
+
+        backdrop-filter: blur(10px);
+
+        overflow: hidden;
+    }
+
+
+    .register-image {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+
+        opacity: 0.92;
+    }
+
+
+    .register-visual h1 {
+        position: relative;
+
+        z-index: 2;
+
+        margin-bottom: 10px;
+
+        font-size: 2.2rem;
+
+        font-weight: 800;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    .register-visual p {
+        position: relative;
+
+        z-index: 2;
+
+        max-width: 340px;
+
+        margin: 0;
+
+        color: rgba(255, 255, 255, 0.88);
+
+        text-align: center;
+
+        font-size: 0.92rem;
+
+        line-height: 1.7;
+    }
+
+
+    /* =========================================
+       BENEFITS
+    ========================================= */
+
+    .register-benefits {
+        position: relative;
+
+        z-index: 2;
+
+        display: flex;
+
+        gap: 10px;
+
+        margin-top: 30px;
+    }
+
+
+    .benefit {
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        padding: 8px 11px;
+
+        border-radius: 10px;
+
+        background: rgba(255, 255, 255, 0.12);
+
+        color: rgba(255, 255, 255, 0.95);
+
+        font-size: 0.72rem;
+
+        font-weight: 600;
+    }
+
+
+    /* =========================================
+       ERRORS
+    ========================================= */
+
+    .invalid-feedback {
+        padding-left: 4px;
+
+        font-size: 0.75rem;
+
+        font-weight: 600;
+    }
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 850px) {
+
+        .register-card {
+            grid-template-columns: 1fr;
+
+            max-width: 550px;
+        }
+
+
+        .register-visual {
+            min-height: auto;
+
+            order: -1;
+
+            padding: 35px 25px;
+        }
+
+
+        .register-image-wrapper {
+            width: 150px;
+            height: 150px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .register-visual h1 {
+            font-size: 1.8rem;
+        }
+
+
+        .register-benefits {
+            display: none;
+        }
+
+
+        .register-form-area {
+            padding: 40px 30px;
+        }
+
+    }
+
+
+    @media (max-width: 500px) {
+
+        .wellbot-register-page {
+            padding: 20px 12px;
+        }
+
+
+        .register-card {
+            border-radius: 20px;
+        }
+
+
+        .register-visual {
+            padding: 28px 20px;
+        }
+
+
+        .register-image-wrapper {
+            width: 125px;
+            height: 125px;
+        }
+
+
+        .register-form-area {
+            padding: 32px 22px;
+        }
+
+
+        .register-heading {
+            font-size: 1.8rem;
+        }
+
+    }
+
+</style>
+
+
+<div class="wellbot-register-page">
+
+    <div class="register-card">
+
+
+        <!-- =====================================
+             REGISTER FORM
+        ====================================== -->
+
+        <div class="register-form-area">
+
+
+            <h2 class="register-heading">
+                Create your account ✨
+            </h2>
+
+
+            <p class="register-subtitle">
+                Join WellBot and start your personal
+                mental wellness journey.
+            </p>
+
+
+            <form
+                method="POST"
+                action=""
+                novalidate
+            >
+
+                {{ form.hidden_tag() }}
+
+
+                <!-- USERNAME -->
+
+                <div class="wellbot-form-group">
+
+                    <label class="wellbot-label">
+                        {{ form.username.label.text }}
+                    </label>
+
+
+                    <div class="wellbot-input-wrapper">
+
+                        <i class="bi bi-person wellbot-input-icon"></i>
+
+
+                        {% if form.username.errors %}
+
+                            {{ form.username(
+                                class="form-control wellbot-input is-invalid",
+                                placeholder="Choose a username"
+                            ) }}
+
+                            {% for error in form.username.errors %}
+
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {{ form.username(
+                                class="form-control wellbot-input",
+                                placeholder="Choose a username"
+                            ) }}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- EMAIL -->
+
+                <div class="wellbot-form-group">
+
+                    <label class="wellbot-label">
+                        {{ form.email.label.text }}
+                    </label>
+
+
+                    <div class="wellbot-input-wrapper">
+
+                        <i class="bi bi-envelope wellbot-input-icon"></i>
+
+
+                        {% if form.email.errors %}
+
+                            {{ form.email(
+                                class="form-control wellbot-input is-invalid",
+                                placeholder="Enter your email"
+                            ) }}
+
+                            {% for error in form.email.errors %}
+
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {{ form.email(
+                                class="form-control wellbot-input",
+                                placeholder="Enter your email"
+                            ) }}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="wellbot-form-group">
+
+                    <label class="wellbot-label">
+                        {{ form.password.label.text }}
+                    </label>
+
+
+                    <div class="wellbot-input-wrapper">
+
+                        <i class="bi bi-lock wellbot-input-icon"></i>
+
+
+                        {% if form.password.errors %}
+
+                            {{ form.password(
+                                class="form-control wellbot-input password-input is-invalid",
+                                placeholder="Create a password",
+                                id="registerPassword"
+                            ) }}
+
+                            {% for error in form.password.errors %}
+
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {{ form.password(
+                                class="form-control wellbot-input password-input",
+                                placeholder="Create a password",
+                                id="registerPassword"
+                            ) }}
+
+                        {% endif %}
+
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="toggleRegisterPassword('registerPassword', 'passwordIcon')"
+                        >
+
+                            <i
+                                class="bi bi-eye"
+                                id="passwordIcon"
+                            ></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="wellbot-form-group">
+
+                    <label class="wellbot-label">
+                        {{ form.confirm_password.label.text }}
+                    </label>
+
+
+                    <div class="wellbot-input-wrapper">
+
+                        <i class="bi bi-shield-lock wellbot-input-icon"></i>
+
+
+                        {% if form.confirm_password.errors %}
+
+                            {{ form.confirm_password(
+                                class="form-control wellbot-input password-input is-invalid",
+                                placeholder="Confirm your password",
+                                id="confirmPassword"
+                            ) }}
+
+                            {% for error in form.confirm_password.errors %}
+
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            {{ form.confirm_password(
+                                class="form-control wellbot-input password-input",
+                                placeholder="Confirm your password",
+                                id="confirmPassword"
+                            ) }}
+
+                        {% endif %}
+
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="toggleRegisterPassword('confirmPassword', 'confirmPasswordIcon')"
+                        >
+
+                            <i
+                                class="bi bi-eye"
+                                id="confirmPasswordIcon"
+                            ></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SUBMIT -->
+
+                <div>
+
+                    {{ form.submit(
+                        class="btn register-button",
+                        value="Create Account"
+                    ) }}
+
+                </div>
+
+            </form>
+
+
+
+            <!-- LOGIN -->
+
+            <div class="login-box">
+
+                Already have an account?
+
+                <a
+                    class="login-link"
+                    href="{{ url_for('users.login') }}"
+                >
+                    Sign In
+                </a>
+
+            </div>
+
+
+            <!-- SECURITY -->
+
+            <div class="security-note">
+
+                <i class="bi bi-shield-check"></i>
+
+                Your information is kept private and secure
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =====================================
+             VISUAL SIDE
+        ====================================== -->
+
+        <div class="register-visual">
+
+
+            <div class="register-image-wrapper">
+
+                <img
+                    src="{{ url_for('static', filename='images/register.jpg') }}"
+                    alt="WellBot wellbeing"
+                    class="register-image"
+                >
+
+            </div>
+
+
+            <h1>
+                Start Your Journey 🌱
+            </h1>
+
+
+            <p>
+                Take a small step toward understanding
+                yourself better. WellBot is here to
+                listen, guide, and support you.
+            </p>
+
+
+            <div class="register-benefits">
+
+                <div class="benefit">
+
+                    <i class="bi bi-chat-heart-fill"></i>
+
+                    Chat
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <i class="bi bi-journal-text"></i>
+
+                    Journal
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <i class="bi bi-stars"></i>
+
+                    Grow
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    function toggleRegisterPassword(
+        inputId,
+        iconId
+    ) {
+
+        const password =
+            document.getElementById(inputId);
+
+        const icon =
+            document.getElementById(iconId);
+
+
+        if (password.type === "password") {
+
+            password.type = "text";
+
+            icon.classList.remove("bi-eye");
+
+            icon.classList.add("bi-eye-slash");
+
+        } else {
+
+            password.type = "password";
+
+            icon.classList.remove("bi-eye-slash");
+
+            icon.classList.add("bi-eye");
+
+        }
+
+    }
+
+</script>
+
+
+{% endblock content %}

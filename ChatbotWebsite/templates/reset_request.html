@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.reset-page{
+    min-height:calc(100vh - 72px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(13,202,240,.12), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(32,201,151,.08), transparent 30%);
+}
+
+.reset-card{
+    width:100%;
+    max-width:550px;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-radius:28px;
+    overflow:hidden;
+    border:1px solid rgba(220,235,239,.8);
+    box-shadow:0 25px 70px rgba(31,67,77,.12);
+}
+
+.reset-header{
+    background:linear-gradient(135deg,#0dcaf0,#0799b8,#087f9f);
+    color:#fff;
+    text-align:center;
+    padding:40px 30px;
+}
+
+.reset-header i{
+    font-size:3.2rem;
+    margin-bottom:15px;
+}
+
+.reset-header h2{
+    font-weight:800;
+    margin-bottom:10px;
+}
+
+.reset-header p{
+    margin:0;
+    opacity:.9;
+}
+
+.reset-body{
+    padding:35px;
+}
+
+.form-label{
+    font-weight:700;
+    color:#44545c;
+    margin-bottom:8px;
+}
+
+.form-control{
+    min-height:52px;
+    border-radius:14px;
+    border:1px solid #dce8eb;
+    background:#f9fcfd;
+}
+
+.form-control:focus{
+    border-color:#0dcaf0;
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(13,202,240,.12);
+}
+
+.btn-theme{
+    width:100%;
+    background:linear-gradient(135deg,#0dcaf0,#0799b8);
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:13px;
+    font-weight:700;
+    box-shadow:0 12px 25px rgba(13,202,240,.25);
+    transition:.25s;
+}
+
+.btn-theme:hover{
+    color:#fff;
+    transform:translateY(-2px);
+    box-shadow:0 18px 35px rgba(13,202,240,.30);
+}
+</style>
+
+<div class="reset-page">
+
+    <div class="reset-card">
+
+        <div class="reset-header">
+            <i class="bi bi-shield-lock-fill"></i>
+
+            <h2>Reset Password</h2>
+
+            <p>
+                Enter your registered email address and we'll send you a password reset link.
+            </p>
+        </div>
+
+        <div class="reset-body">
+
+            <form method="POST">
+
+                {{ form.hidden_tag() }}
+
+                <div class="mb-4">
+
+                    {{ form.email.label(class="form-label") }}
+
+                    {% if form.email.errors %}
+
+                        {{ form.email(class="form-control is-invalid", placeholder="Enter your email") }}
+
+                        {% for error in form.email.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+
+                        {{ form.email(class="form-control", placeholder="Enter your email") }}
+
+                    {% endif %}
+
+                </div>
+
+                {{ form.submit(class="btn btn-theme", value="Send Reset Link") }}
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.journal-page{
+    min-height:calc(100vh - 72px);
+    padding:50px 20px;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(13,202,240,.12), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(32,201,151,.08), transparent 30%);
+}
+
+.journal-card{
+    max-width:850px;
+    margin:auto;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-radius:28px;
+    border:1px solid rgba(220,235,239,.8);
+    box-shadow:0 25px 70px rgba(31,67,77,.12);
+    overflow:hidden;
+}
+
+.card-header{
+    background:linear-gradient(135deg,#0dcaf0,#0799b8,#087f9f);
+    color:#fff;
+    padding:35px;
+}
+
+.card-header h2{
+    font-weight:800;
+    margin:0;
+}
+
+.card-body{
+    padding:35px;
+}
+
+.form-label{
+    font-weight:700;
+    color:#44545c;
+    margin-bottom:8px;
+}
+
+.form-control{
+    border-radius:14px;
+    border:1px solid #dce8eb;
+    background:#f9fcfd;
+    min-height:52px;
+    transition:.2s;
+}
+
+.form-control:focus{
+    border-color:#0dcaf0;
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(13,202,240,.12);
+}
+
+textarea.form-control{
+    min-height:320px;
+    resize:vertical;
+}
+
+.btn-theme{
+    background:linear-gradient(135deg,#0dcaf0,#0799b8);
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:12px 30px;
+    font-weight:700;
+    box-shadow:0 12px 25px rgba(13,202,240,.25);
+    transition:.25s;
+}
+
+.btn-theme:hover{
+    color:#fff;
+    transform:translateY(-2px);
+    box-shadow:0 18px 35px rgba(13,202,240,.30);
+}
+
+.invalid-feedback{
+    font-weight:600;
+}
+
+@media(max-width:768px){
+
+    .journal-card{
+        margin:10px;
+    }
+
+    .card-header{
+        padding:25px;
+    }
+
+    .card-body{
+        padding:25px;
+    }
+
+}
+</style>
+
+<div class="journal-page">
+
+    <div class="journal-card">
+
+        <div class="card-header">
+            <h2>
+                <i class="bi bi-journal-richtext"></i>
+                {{ legend }}
+            </h2>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {{ form.hidden_tag() }}
+
+                <div class="mb-4">
+
+                    {{ form.mood.label(class="form-label") }}
+
+                    {% if form.mood.errors %}
+
+                        {{ form.mood(class="form-control is-invalid") }}
+
+                        {% for error in form.mood.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+
+                        {{ form.mood(class="form-control") }}
+
+                    {% endif %}
+
+                </div>
+
+                <div class="mb-4">
+
+                    {{ form.content.label(class="form-label") }}
+
+                    {% if form.content.errors %}
+
+                        {{ form.content(class="form-control is-invalid") }}
+
+                        {% for error in form.content.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+
+                        {{ form.content(class="form-control") }}
+
+                    {% endif %}
+
+                </div>
+
+                <div class="text-end">
+
+                    {{ form.submit(class="btn btn-theme") }}
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}
