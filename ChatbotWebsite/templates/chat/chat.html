@@ -36,7 +36,7 @@
             ),
             #f7fbfc;
 
-        overflow: visible;
+        overflow: hidden;
     }
 
 
@@ -752,9 +752,6 @@
         padding-bottom: 10px;
 
         scrollbar-width: none;
-
-        position: relative;
-        z-index: 1;
     }
 
     .quick-prompts::-webkit-scrollbar {
@@ -794,20 +791,13 @@
 
     .tools {
         display: flex;
-
-        flex-wrap: wrap;
-
-        gap: 8px;
-
-        padding: 8px 0;
-
-        border: none !important;
-
-        overflow-x: auto;
-        overflow-y: visible;
-
-        position: relative;
-        z-index: 5000;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0;
+    border: none !important;
+    overflow: visible;
+    position: relative;
+    z-index: 5000;
     }
 
     .tool-button {
@@ -923,15 +913,10 @@
 
     .dropdown-menu {
         border: none;
-
-        border-radius: 13px;
-
-        padding: 7px;
-
-        box-shadow:
-            0 15px 40px rgba(0, 0, 0, 0.12);
-
-        z-index: 3000 !important;
+    border-radius: 13px;
+    padding: 7px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    z-index: 9999 !important;
     }
 
     .dropdown-item {
@@ -1508,7 +1493,6 @@
                         type="button"
                         class="btn btn-outline-info tool-button dropdown-toggle"
                         data-bs-toggle="dropdown"
-                        data-bs-display="static"
                     >
                         📚 Topics
                     </button>
@@ -1543,7 +1527,6 @@
                         type="button"
                         class="btn btn-outline-info tool-button dropdown-toggle"
                         data-bs-toggle="dropdown"
-                        data-bs-display="static"
                     >
                         📝 Tests
                     </button>
@@ -1578,7 +1561,6 @@
                         type="button"
                         class="btn btn-outline-success tool-button dropdown-toggle"
                         data-bs-toggle="dropdown"
-                        data-bs-display="static"
                     >
                         🧘 Mindfulness
                     </button>
