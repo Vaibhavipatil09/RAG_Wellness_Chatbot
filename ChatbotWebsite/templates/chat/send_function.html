@@ -25,6 +25,11 @@
         url: "/chat_messages",
       }).done(function (data) {
         appendMessage(BOT_NAME, BOT_IMG, "left", data.msg);
+        if (data.crisis) {
+          setTimeout(function () {
+            window.location.href = "/sos";
+          }, 2500);
+        }
       });
       $("#textInput").val("");
     });
