@@ -24,6 +24,7 @@ python-dotenv==1.0.1
 sentence-transformers
 faiss-cpu
 anthropic
+scikit-learn==1.7.2
 
 # For MAC
 # autocorrect==2.6.1
