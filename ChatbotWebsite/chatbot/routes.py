@@ -291,11 +291,24 @@ def mindfulness():
 
     title = request.form["title"]
 
-    description, file_name = get_description(title)
+    exercise = get_exercise(title)
 
-    return jsonify(
-        {
-            "description": description,
-            "file_name": file_name,
-        }
-    )
+    if exercise is None:
+        return jsonify({"type": "activity", "description": "Exercise not found", "steps": []})
+
+    if exercise["type"] == "audio":
+        return jsonify(
+            {
+                "type": "audio",
+                "description": exercise["description"],
+                "file_name": exercise["file_name"],
+            }
+        )
+    else:
+        return jsonify(
+            {
+                "type": "activity",
+                "description": exercise["description"],
+                "steps": exercise.get("steps", []),
+            }
+        )

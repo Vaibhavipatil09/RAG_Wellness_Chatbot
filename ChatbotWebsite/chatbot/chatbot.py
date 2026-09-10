@@ -116,6 +116,8 @@ except:  # create new model if not existed
     plt.xlabel('Epoch')
     plt.legend(['Train'], loc='upper left')
 
+    plt.tight_layout()
+    plt.savefig("training_graph.png")
     plt.show()
 
 

@@ -2,23 +2,120 @@
   "mindfulness_exercises": [
     {
       "title": "Breathing Retraining (10:45)",
+      "type": "audio",
       "description": "Breathing Retraining is a technique for reducing your level of anxiety. It is a simple technique that can be used anywhere and at any time.",
       "file_name": "Breathing Retraining.mp3"
     },
     {
       "title": "Body Scan Meditation (4:01)",
+      "type": "audio",
       "description": "Body Scan Meditation is a type of mindfulness meditation that involves bringing awareness to different parts of the body and noticing physical sensations without judgment.",
       "file_name": "Body Scan Meditation.mp3"
     },
     {
       "title": "Mountain Meditation (8:12)",
+      "type": "audio",
       "description": "Mountain Meditation is a type of guided imagery meditation that involves visualizing yourself as a mountain, steady and strong, while observing your thoughts and feelings as clouds passing by.",
       "file_name": "Mountain Meditation.mp3"
     },
     {
       "title": "Rain and Thunder Sounds (9:37)",
+      "type": "audio",
       "description": "The sound of rain can lower your anxiety levels, promote relaxation and enhance the quality of sleep.",
       "file_name": "Rain and Thunder Sounds.mp3"
+    },
+    {
+      "title": "Mood Doodle (5 min)",
+      "type": "activity",
+      "description": "A simple drawing exercise to express how you're feeling without needing any words or artistic skill.",
+      "steps": [
+        "Grab any paper and pen you have nearby",
+        "Set a timer for 5 minutes",
+        "Draw your current mood using only lines, shapes, or scribbles - it doesn't need to look like anything",
+        "Look at what you drew, then let it go - there's nothing to judge here"
+      ]
+    },
+    {
+      "title": "Color Your Mood (15 min)",
+      "type": "activity",
+      "description": "A painting exercise using color to process emotion, with no pressure to create something 'good'.",
+      "steps": [
+        "Use any paints, markers, or crayons you have on hand",
+        "Pick colors that match how you're feeling right now",
+        "Fill a page freely for about 15 minutes, no plan needed",
+        "Notice how you feel afterward compared to before you started"
+      ]
+    },
+    {
+      "title": "Free Movement Break (5 min)",
+      "type": "activity",
+      "description": "A short movement and dancing break to release built-up physical tension and shift your mood.",
+      "steps": [
+        "Put on any song you like, or just move in silence",
+        "Stand up and gently shake out your arms and shoulders",
+        "Let your body move however feels natural for the length of one song",
+        "No steps to get right - the only goal is to move"
+      ]
+    },
+    {
+      "title": "Quick Activity Boost (10 min)",
+      "type": "activity",
+      "description": "A short burst of physical activity to release tension and boost mood through movement.",
+      "steps": [
+        "Pick any physical activity you enjoy - a walk, stretching, shooting hoops, a quick sport",
+        "Set a light goal of just 10 minutes, no pressure to do more",
+        "Notice your breathing and body as you move, rather than rushing through it",
+        "Afterward, take a moment to notice how your energy or mood has shifted"
+      ]
+    },
+    {
+      "title": "4-7-8 Breathing for Sleep (3 min)",
+      "type": "activity",
+      "description": "A simple breathing pattern that helps slow your heart rate and signal to your body that it's time to sleep.",
+      "steps": [
+        "Lie down comfortably and close your eyes",
+        "Breathe in quietly through your nose for 4 seconds",
+        "Hold your breath for 7 seconds",
+        "Exhale slowly through your mouth for 8 seconds, making a soft whoosh sound",
+        "Repeat this cycle 4 times, letting your body relax more with each round"
+      ]
+    },
+    {
+      "title": "Progressive Muscle Relaxation (8 min)",
+      "type": "activity",
+      "description": "A technique for releasing physical tension by tensing and relaxing each muscle group in turn, helping your body settle before sleep.",
+      "steps": [
+        "Lie down and take a few slow breaths to settle in",
+        "Starting with your feet, tense the muscles tightly for 5 seconds, then release completely",
+        "Move up to your calves, then thighs - tense for 5 seconds, then let go",
+        "Continue up through your stomach, hands, arms, shoulders, and finally your face",
+        "After finishing, lie still for a minute and notice the heaviness and relaxation in your body"
+      ]
+    },
+    {
+      "title": "Wind-Down Routine Checklist (5 min)",
+      "type": "activity",
+      "description": "A short pre-bed checklist to signal to your body and mind that it's time to sleep.",
+      "steps": [
+        "Dim the lights in your room, or switch to a warm lamp instead of overhead light",
+        "Put your phone somewhere out of arm's reach, ideally outside the bedroom",
+        "Take 5 slow, deep breaths, making each exhale a little longer than the last",
+        "Gently stretch your neck and shoulders for 30 seconds",
+        "Write or think of one small thing you're looking forward to tomorrow"
+      ]
+    },
+    {
+      "title": "Worry Dump Before Bed (5 min)",
+      "type": "activity",
+      "description": "A quick writing exercise to get racing thoughts out of your head and onto paper, so they're less likely to keep you awake.",
+      "steps": [
+        "Grab any notebook or piece of paper - this isn't for anyone else to read",
+        "Set a timer for 5 minutes",
+        "Write down everything on your mind right now, without worrying about order or grammar",
+        "When the timer ends, close the notebook - you can return to these thoughts tomorrow if needed",
+        "Take a few slow breaths before settling in to sleep"
+      ]
     }
   ]
 }
+
