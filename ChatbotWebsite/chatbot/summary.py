@@ -28,7 +28,7 @@ SUMMARY_PROMPT = (
 )
 
 
-def summarize_chat(chat_text):
+def summarize_chat(chat_text, lang="en"):
     # drop the YouTube suggestion lines, keep only the real conversation
     lines = [
         line for line in chat_text.splitlines()
@@ -44,12 +44,20 @@ def summarize_chat(chat_text):
     if not api_key:
         return "Sorry, I can't create a summary right now."
 
+    prompt = SUMMARY_PROMPT
+
+    if lang == "hi":
+        prompt = (
+            "IMPORTANT: Write the whole summary, including the 3 headings, "
+            "in simple Hindi (Devanagari script).\n\n" + SUMMARY_PROMPT
+        )
+
     try:
         client = genai.Client(api_key=api_key)
 
         result = client.models.generate_content(
             model=GEMINI_MODEL,
-            contents=SUMMARY_PROMPT + chat_text,
+            contents=prompt + chat_text,
         )
 
         summary = (result.text or "").strip()

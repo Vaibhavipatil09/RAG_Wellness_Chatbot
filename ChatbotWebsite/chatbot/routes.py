@@ -78,14 +78,20 @@ def chatting():
 
     # Fix grammar / spelling first. The corrected text is used for the
     # crisis check, RAG and the intent classifier.
-    message = correct_grammar(original_message)
+    lang = request.form.get("lang", "en")  # "en" or "hi"
+
+    # (in Hindi mode this also translates the message to English)
+    message = correct_grammar(original_message, lang)
 
     # Only tell the user about a correction if the WORDS changed
     # (ignore case and punctuation-only changes).
     def _words(text):
         return re.sub(r"[^\w\s]", "", text.lower()).split()
 
-    corrected = message if _words(message) != _words(original_message) else None
+    corrected = None
+
+    if lang != "hi" and _words(message) != _words(original_message):
+        corrected = message
 
     # ---------------------------------------------------------
     # 1. CRISIS CHECK
@@ -220,7 +226,7 @@ def chat_summary():
 
     return jsonify(
         {
-            "summary": summarize_chat(chat_text)
+            "summary": summarize_chat(chat_text, request.form.get("lang", "en"))
         }
     )
 

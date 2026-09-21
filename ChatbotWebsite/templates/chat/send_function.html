@@ -57,6 +57,7 @@
       $.ajax({
         data: {
           msg: text,
+          lang: window.SITE_LANG,
         },
         type: "POST",
         url: "/chat_messages",
@@ -447,12 +448,13 @@ function appendActivity(name, img, side, description, steps, youtube) {
     micButton.style.display = "none";
   } else {
     const recognition = new SpeechRec();
-    recognition.lang = navigator.language || "en-US";
+    recognition.lang = window.SITE_LANG === "hi" ? "hi-IN" : (navigator.language || "en-US");
     recognition.interimResults = true;
     recognition.continuous = false;
 
     let listening = false;
     let textBeforeMic = "";
+    const normalPlaceholder = textBox.placeholder;
 
     micButton.addEventListener("click", function () {
       if (listening) {
@@ -486,7 +488,7 @@ function appendActivity(name, img, side, description, steps, youtube) {
     recognition.onend = function () {
       listening = false;
       micButton.classList.remove("listening");
-      textBox.placeholder = "Talk to WellBot...";
+      textBox.placeholder = normalPlaceholder;
       textBox.focus();
       textBox.dispatchEvent(new Event("input")); // show suggestions for the spoken text
     };
@@ -520,12 +522,11 @@ function appendActivity(name, img, side, description, steps, youtube) {
     }
 
     summaryButton.disabled = true;
-    summaryButton.textContent = "⏳ Summarizing...";
 
     $.ajax({
       type: "POST",
       url: "/chat_summary",
-      data: { chat: lines.slice(-30).join("\n") }, // last 30 messages
+      data: { chat: lines.slice(-30).join("\n"), lang: window.SITE_LANG }, // last 30 messages
     })
       .done(function (data) {
         appendMessage(BOT_NAME, BOT_IMG, "left", "**📝 Chat summary**\n\n" + data.summary);
@@ -535,7 +536,6 @@ function appendActivity(name, img, side, description, steps, youtube) {
       })
       .always(function () {
         summaryButton.disabled = false;
-        summaryButton.textContent = "📝 Summary";
       });
   });
 </script>

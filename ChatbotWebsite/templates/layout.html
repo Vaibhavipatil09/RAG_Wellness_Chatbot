@@ -51,6 +51,13 @@
     >
 
 
+    <!-- Current site language ("en" or "hi") - used by the chat page too -->
+    <script>
+        window.SITE_LANG =
+            document.cookie.indexOf("googtrans=/en/hi") !== -1 ? "hi" : "en";
+    </script>
+
+
     {% block style %}
     {% endblock style %}
 
@@ -641,6 +648,28 @@
 
         }
 
+
+        /* ==================================================
+           GOOGLE TRANSLATE (hide its default bar / widget)
+        ================================================== */
+
+        #google_translate_element,
+        iframe.skiptranslate,
+        .goog-te-banner-frame,
+        #goog-gt-tt,
+        .goog-te-balloon-frame {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+        .goog-text-highlight {
+            background: none !important;
+            box-shadow: none !important;
+        }
+
     </style>
 
 </head>
@@ -771,6 +800,23 @@
                 <!-- RIGHT -->
 
                 <ul class="navbar-nav wellbot-nav">
+
+
+                    <!-- LANGUAGE (English / Hindi) -->
+
+                    <li class="nav-item">
+
+                        <button
+                            type="button"
+                            id="langToggle"
+                            class="nav-link wellbot-nav-link notranslate"
+                            translate="no"
+                            onclick="toggleLanguage()"
+                        >
+                            🌐 <span id="langToggleText"></span>
+                        </button>
+
+                    </li>
 
 
                     <!-- SOS -->
@@ -1057,6 +1103,66 @@
 
     </script>
 
+
+
+    <!-- ==================================================
+         LANGUAGE SWITCH (English <-> Hindi)
+         Uses the free Google Translate widget, so the whole
+         page (menus, chat, topics, tests...) changes language.
+    ================================================== -->
+
+    <div id="google_translate_element"></div>
+
+    <script>
+
+        // button text: show the language you can switch TO
+        document.getElementById("langToggleText").textContent =
+            window.SITE_LANG === "hi" ? "English" : "हिंदी";
+
+
+        function toggleLanguage() {
+
+            const past = "expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+
+            if (window.SITE_LANG === "hi") {
+
+                // back to English: remove the translate cookie
+                document.cookie = "googtrans=; " + past;
+                document.cookie = "googtrans=; " + past + "; domain=" + location.hostname;
+
+            } else {
+
+                // switch to Hindi: set the translate cookie
+                document.cookie = "googtrans=/en/hi; path=/";
+
+            }
+
+            location.reload();
+
+        }
+
+
+        // load the Google Translate script only when Hindi is selected
+        if (window.SITE_LANG === "hi") {
+
+            window.googleTranslateElementInit = function () {
+                new google.translate.TranslateElement(
+                    {
+                        pageLanguage: "en",
+                        includedLanguages: "hi,en",
+                        autoDisplay: false
+                    },
+                    "google_translate_element"
+                );
+            };
+
+            const gt = document.createElement("script");
+            gt.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+            document.body.appendChild(gt);
+
+        }
+
+    </script>
 
 </body>
 

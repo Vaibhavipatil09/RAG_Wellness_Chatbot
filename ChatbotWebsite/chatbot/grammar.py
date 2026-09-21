@@ -22,8 +22,22 @@ GRAMMAR_PROMPT = (
 )
 
 
-def correct_grammar(text):
+TRANSLATE_PROMPT = (
+    "The message below may be in Hindi (Devanagari), Hinglish (Hindi written "
+    "in English letters) or English. Translate it into simple, correct "
+    "English. If it is already English, just fix the grammar. Do NOT answer "
+    "the message and do NOT add anything. Return ONLY the English text.\n\n"
+    "Message: "
+)
+
+
+def correct_grammar(text, lang="en"):
     text = text.strip()
+
+    # Hindi mode: translate the message to English so the chatbot
+    # (which works in English) can understand it
+    if lang == "hi":
+        return _translate_to_english(text)
 
     # Very short messages ("hi", "thanks") - just fix spelling
     if len(text.split()) < 3:
@@ -54,3 +68,29 @@ def correct_grammar(text):
     except Exception as e:
         print(f">>> Grammar correction failed, using spell checker: {e}")
         return _spell(text)
+
+
+def _translate_to_english(text):
+    api_key = os.environ.get("GEMINI_API_KEY")
+
+    if not api_key:
+        return text
+
+    try:
+        client = genai.Client(api_key=api_key)
+
+        result = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=TRANSLATE_PROMPT + text,
+        )
+
+        english = (result.text or "").strip().strip('"')
+
+        if not english or len(english) > len(text) * 3 + 50:
+            return text
+
+        return english
+
+    except Exception as e:
+        print(f">>> Translation failed: {e}")
+        return text
