@@ -1,3 +1,34 @@
+<style>
+  /* ---- formatted bot answers ---- */
+  .chat-text p { margin: 0 0 0.6em; }
+  .chat-text p:last-child { margin-bottom: 0; }
+  .chat-text ul, .chat-text ol { margin: 0 0 0.6em; padding-left: 1.3rem; }
+  .chat-text li { margin-bottom: 3px; }
+  .chat-text a { color: #0798b8; font-weight: 600; }
+
+  /* ---- grammar correction note ---- */
+  .corrected-note { margin-top: 6px; font-size: 0.75rem; color: rgba(255, 255, 255, 0.85); }
+
+  /* ---- typing suggestions ---- */
+  .chat-inputarea { position: relative; }
+  #suggestBox {
+    display: none; position: absolute; left: 0; right: 0; bottom: 100%;
+    margin-bottom: 6px; background: #fff; border: 1px solid #dce9ed;
+    border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    overflow: hidden; z-index: 6000;
+  }
+  .suggest-item { padding: 9px 14px; font-size: 0.88rem; color: #25343d; cursor: pointer; }
+  .suggest-item:hover { background: #e9f9fd; }
+
+  /* ---- mic button ---- */
+  .mic-button {
+    width: 42px; height: 42px; flex-shrink: 0; border: none; border-radius: 11px;
+    background: #e9f9fd; cursor: pointer; font-size: 1.1rem;
+  }
+  .mic-button.listening { background: #ffd6d6; animation: micPulse 1s infinite; }
+  @keyframes micPulse { 50% { box-shadow: 0 0 0 6px rgba(255, 80, 80, 0.25); } }
+</style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
   //components in html
@@ -15,15 +46,31 @@
   //post request for chatting
   $(document).ready(function () {
     $("#message-form").on("submit", function (event) {
-      appendMessage(USER_NAME, USER_IMG, "right", $("#textInput").val());
       event.preventDefault();
+
+      const text = $("#textInput").val().trim();
+      if (!text) return;
+
+      hideSuggestions();
+      const userBubble = appendMessage(USER_NAME, USER_IMG, "right", text);
+
       $.ajax({
         data: {
-          msg: $("#textInput").val(),
+          msg: text,
         },
         type: "POST",
         url: "/chat_messages",
       }).done(function (data) {
+        // show the grammar-corrected version under the user's message
+        if (data.corrected) {
+          userBubble
+            .querySelector(".chat-bubble")
+            .insertAdjacentHTML(
+              "beforeend",
+              `<div class="corrected-note">✏️ Corrected: <em>${escapeHtml(data.corrected)}</em></div>`
+            );
+        }
+
         appendMessage(BOT_NAME, BOT_IMG, "left", data.msg);
         if (data.crisis) {
           setTimeout(function () {
@@ -87,9 +134,9 @@
     }).done(function (data) {
       appendMessage(USER_NAME, USER_IMG, "right", exercise_title);
       if (data.type === "audio") {
-        appendExercise(BOT_NAME, BOT_IMG, "left", data.description, data.file_name);
+        appendExercise(BOT_NAME, BOT_IMG, "left", data.description, data.file_name, data.youtube);
       } else {
-        appendActivity(BOT_NAME, BOT_IMG, "left", data.description, data.steps);
+        appendActivity(BOT_NAME, BOT_IMG, "left", data.description, data.steps, data.youtube);
       }
     });
   }
@@ -104,12 +151,13 @@
           <div class="chat-info-name">${name}</div>
           <div class="chat-info-time">${formatDate(new Date())}</div>
         </div>
-        <div class="chat-text">${text}</div>
+        <div class="chat-text">${side === "left" ? formatText(text) : escapeHtml(text)}</div>
       </div>
     </div>
     `;
     msgerChat.insertAdjacentHTML("beforeend", msgHTML);
     msgerChat.scrollTop += 500;
+    return msgerChat.lastElementChild;
   }
 
   function appendTest(name, img, side, questions, title){
@@ -182,7 +230,7 @@
     });
     //display score
 }
-function appendExercise(name, img, side, description, file_name) {
+function appendExercise(name, img, side, description, file_name, youtube) {
   //append mindfulness exercise to chatting area
   let audio_src = "/static/mindfulness/" + file_name;
   const msgHTML = `
@@ -197,6 +245,7 @@ function appendExercise(name, img, side, description, file_name) {
       <audio id="music-player" controls>
         <source src="${audio_src}" type="audio/mpeg">
       </audio>
+      ${youtubeLinkHTML(youtube)}
     </div>
   </div>
   `;
@@ -204,7 +253,7 @@ function appendExercise(name, img, side, description, file_name) {
   msgerChat.scrollTop += 500;
 }
 
-function appendActivity(name, img, side, description, steps) {
+function appendActivity(name, img, side, description, steps, youtube) {
   //append a text-based mindfulness activity (no audio) to chatting area
   const stepsHTML = (steps || [])
     .map((step) => `<li>${step}</li>`)
@@ -219,6 +268,7 @@ function appendActivity(name, img, side, description, steps) {
       </div>
       <div class="chat-text mb-2">${description}</div>
       <ol class="activity-steps mb-0 ps-3">${stepsHTML}</ol>
+      ${youtubeLinkHTML(youtube)}
     </div>
   </div>
   `;
@@ -236,5 +286,209 @@ function appendActivity(name, img, side, description, steps) {
     const h = "0" + date.getHours();
     const m = "0" + date.getMinutes();
     return `${h.slice(-2)}:${m.slice(-2)}`;
+  }
+
+  // ============================================================
+  // HELPERS: format bot text (paragraphs, bullets, bold, links)
+  // ============================================================
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function youtubeLinkHTML(url) {
+    if (!url) return "";
+    return `<div class="mt-2"><a href="${url}" target="_blank" rel="noopener noreferrer">▶ Watch on YouTube</a></div>`;
+  }
+
+  function formatText(raw) {
+    // inline styles: [text](link), **bold**, *italic*
+    function inline(t) {
+      return t
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+          '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(?!\s)([^*]+?)\*/g, "<em>$1</em>");
+    }
+
+    const lines = escapeHtml(raw).split(/\r?\n/);
+    let html = "";
+    let para = [];
+    let list = null; // "ul" or "ol"
+
+    function endPara() {
+      if (para.length) {
+        html += "<p>" + inline(para.join("<br>")) + "</p>";
+        para = [];
+      }
+    }
+    function endList() {
+      if (list) {
+        html += "</" + list + ">";
+        list = null;
+      }
+    }
+    function addItem(type, text) {
+      endPara();
+      if (list !== type) {
+        endList();
+        html += "<" + type + ">";
+        list = type;
+      }
+      html += "<li>" + inline(text) + "</li>";
+    }
+
+    lines.forEach(function (line) {
+      const t = line.trim();
+      let m;
+
+      if (!t) {
+        endPara();
+        endList();
+      } else if ((m = t.match(/^[-*•]\s+(.*)/))) {
+        addItem("ul", m[1]);
+      } else if ((m = t.match(/^\d+[.)]\s+(.*)/))) {
+        addItem("ol", m[1]);
+      } else if ((m = t.match(/^#{1,6}\s+(.*)/))) {
+        endPara();
+        endList();
+        html += "<p><strong>" + inline(m[1]) + "</strong></p>";
+      } else {
+        endList();
+        para.push(t);
+      }
+    });
+
+    endPara();
+    endList();
+    return html;
+  }
+
+  // Format the bot messages that were loaded from chat history
+  document.querySelectorAll(".history-text").forEach(function (el) {
+    el.innerHTML = formatText(el.textContent.trim());
+  });
+
+
+  // ============================================================
+  // TYPING SUGGESTIONS
+  // ============================================================
+
+  const textBox = document.getElementById("textInput");
+  const suggestBox = document.getElementById("suggestBox");
+  let suggestTimer = null;
+
+  function hideSuggestions() {
+    suggestBox.style.display = "none";
+    suggestBox.innerHTML = "";
+  }
+
+  textBox.addEventListener("input", function () {
+    clearTimeout(suggestTimer);
+
+    const typed = textBox.value.trim();
+
+    if (typed.length < 2) {
+      hideSuggestions();
+      return;
+    }
+
+    // wait 250 ms after the user stops typing
+    suggestTimer = setTimeout(function () {
+      $.getJSON("/suggest", { q: typed }).done(function (data) {
+        // ignore old answers if the user kept typing
+        if (textBox.value.trim() !== typed) return;
+
+        suggestBox.innerHTML = "";
+
+        if (!data.suggestions.length) {
+          suggestBox.style.display = "none";
+          return;
+        }
+
+        data.suggestions.forEach(function (text) {
+          const item = document.createElement("div");
+          item.className = "suggest-item";
+          item.textContent = text;
+          item.addEventListener("click", function () {
+            textBox.value = text;
+            hideSuggestions();
+            textBox.focus();
+          });
+          suggestBox.appendChild(item);
+        });
+
+        suggestBox.style.display = "block";
+      });
+    }, 250);
+  });
+
+  textBox.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") hideSuggestions();
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!suggestBox.contains(e.target) && e.target !== textBox) hideSuggestions();
+  });
+
+
+  // ============================================================
+  // MIC (speech to text) - works in Chrome / Edge / Safari
+  // ============================================================
+
+  const micButton = document.getElementById("micButton");
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRec) {
+    // browser does not support it (e.g. Firefox) - hide the button
+    micButton.style.display = "none";
+  } else {
+    const recognition = new SpeechRec();
+    recognition.lang = navigator.language || "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    let listening = false;
+    let textBeforeMic = "";
+
+    micButton.addEventListener("click", function () {
+      if (listening) {
+        recognition.stop();
+      } else {
+        textBeforeMic = textBox.value ? textBox.value.trim() + " " : "";
+        recognition.start();
+      }
+    });
+
+    recognition.onstart = function () {
+      listening = true;
+      micButton.classList.add("listening");
+      textBox.placeholder = "Listening...";
+    };
+
+    recognition.onresult = function (event) {
+      let spoken = "";
+      for (let i = 0; i < event.results.length; i++) {
+        spoken += event.results[i][0].transcript;
+      }
+      textBox.value = textBeforeMic + spoken;
+    };
+
+    recognition.onerror = function (event) {
+      if (event.error === "not-allowed") {
+        alert("Microphone access is blocked. Please allow the microphone in your browser settings.");
+      }
+    };
+
+    recognition.onend = function () {
+      listening = false;
+      micButton.classList.remove("listening");
+      textBox.placeholder = "Talk to WellBot...";
+      textBox.focus();
+      textBox.dispatchEvent(new Event("input")); // show suggestions for the spoken text
+    };
   }
 </script>

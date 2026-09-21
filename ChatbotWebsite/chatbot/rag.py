@@ -28,6 +28,10 @@ DATASET_PATH = os.path.join(
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 
 
+# Gemini model used for answers (and grammar correction)
+GEMINI_MODEL = "gemini-3.6-flash"
+
+
 # Below this score, RAG considers the message unrelated
 # to the mental-health knowledge base.
 STRICT_MIN_SCORE = 0.45
@@ -228,7 +232,14 @@ STRICT_SYSTEM_PROMPT = (
     "risk, gently and directly encourage them to contact a crisis line "
     "or trusted person right away, in addition to anything else you say - "
     "this instruction applies regardless of what the reference material "
-    "contains."
+    "contains.\n"
+    "6. FORMATTING: write in short paragraphs of 2-3 sentences with a "
+    "blank line between paragraphs. When giving tips or steps, put each "
+    "one on its own line starting with '- '. Use **bold** only for a few "
+    "key words. No headings and no tables. Keep the answer under about "
+    "180 words.\n"
+    "7. Never include links or URLs in your answer - links are added "
+    "separately."
 )
 
 
@@ -320,7 +331,7 @@ def get_rag_response(user_message):
     # =========================================================
 
     result = client.models.generate_content(
-        model="gemini-3.6-flash",
+        model=GEMINI_MODEL,
         contents=prompt,
     )
 

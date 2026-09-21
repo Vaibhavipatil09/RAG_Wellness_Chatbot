@@ -1,3 +1,5 @@
+import re
+
 from flask import (
     Blueprint,
     render_template,
@@ -17,6 +19,9 @@ from ChatbotWebsite.chatbot.chatbot import *
 from ChatbotWebsite.chatbot.topic import *
 from ChatbotWebsite.chatbot.test import *
 from ChatbotWebsite.chatbot.mindfulness import *
+from ChatbotWebsite.chatbot.mindfulness import get_youtube_link, get_video_suggestion, get_topic_video, get_test_video
+from ChatbotWebsite.chatbot.suggestions import get_suggestions
+from ChatbotWebsite.chatbot.grammar import correct_grammar
 
 from ChatbotWebsite.chatbot.rag import (
     get_rag_response,
@@ -68,7 +73,18 @@ def chatting():
     # Get user message
     # ---------------------------------------------------------
 
-    message = request.form["msg"]
+    original_message = request.form["msg"]
+
+    # Fix grammar / spelling first. The corrected text is used for the
+    # crisis check, RAG and the intent classifier.
+    message = correct_grammar(original_message)
+
+    # Only tell the user about a correction if the WORDS changed
+    # (ignore case and punctuation-only changes).
+    def _words(text):
+        return re.sub(r"[^\w\s]", "", text.lower()).split()
+
+    corrected = message if _words(message) != _words(original_message) else None
 
     # ---------------------------------------------------------
     # 1. CRISIS CHECK
@@ -76,7 +92,8 @@ def chatting():
     # Crisis messages skip RAG and intent classifier.
     # ---------------------------------------------------------
 
-    crisis = is_crisis(message)
+    # check both the original and the corrected text, to be safe
+    crisis = is_crisis(original_message) or is_crisis(message)
 
     if crisis:
 
@@ -146,6 +163,16 @@ def chatting():
         )
 
     # ---------------------------------------------------------
+    # 5b. YOUTUBE LINK (added to every normal chat reply)
+    # ---------------------------------------------------------
+
+    if not crisis:
+        video = get_video_suggestion(message, response)
+
+        if video:
+            response = response + "\n\n" + video
+
+    # ---------------------------------------------------------
     # 6. SAVE CHAT HISTORY
     # ---------------------------------------------------------
 
@@ -153,7 +180,7 @@ def chatting():
 
         user_message = ChatMessage(
             sender="user",
-            message=message,
+            message=original_message,
             user=current_user,
         )
 
@@ -176,6 +203,23 @@ def chatting():
         {
             "msg": response,
             "crisis": crisis,
+            "corrected": corrected,
+        }
+    )
+
+
+# ============================================================
+# TYPING SUGGESTIONS
+# ============================================================
+
+@chatbot.route("/suggest")
+def suggest():
+
+    text = request.args.get("q", "")
+
+    return jsonify(
+        {
+            "suggestions": get_suggestions(text)
         }
     )
 
@@ -190,6 +234,13 @@ def topic():
     title = request.form["title"]
 
     contents = get_content(title)
+
+    # add a YouTube link to the last message of the topic
+    topic_video = get_topic_video(title)
+
+    if topic_video and isinstance(contents, list) and contents:
+        contents = list(contents)
+        contents[-1] = contents[-1] + "\n\n" + topic_video
 
     if current_user.is_authenticated:
 
@@ -264,6 +315,12 @@ def score():
         score,
     )
 
+    # add a YouTube link under the test result
+    test_video = get_test_video(title)
+
+    if test_video:
+        score_message = score_message + "\n\n" + test_video
+
     if current_user.is_authenticated:
 
         bot_score_message = ChatMessage(
@@ -302,6 +359,7 @@ def mindfulness():
                 "type": "audio",
                 "description": exercise["description"],
                 "file_name": exercise["file_name"],
+                "youtube": get_youtube_link(title),
             }
         )
     else:
@@ -310,5 +368,6 @@ def mindfulness():
                 "type": "activity",
                 "description": exercise["description"],
                 "steps": exercise.get("steps", []),
+                "youtube": get_youtube_link(title),
             }
         )

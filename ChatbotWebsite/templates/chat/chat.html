@@ -1280,7 +1280,7 @@
 
                             </div>
 
-                            <div class="chat-text">
+                            <div class="chat-text history-text">
                                 {{ message.message }}
                             </div>
 
@@ -1616,6 +1616,19 @@
                     autocomplete="off"
                     placeholder="Talk to WellBot..."
                 >
+
+                <!-- Typing suggestions (filled by JavaScript) -->
+                <div id="suggestBox"></div>
+
+                <!-- Mic: speak instead of typing -->
+                <button
+                    type="button"
+                    id="micButton"
+                    class="mic-button"
+                    title="Speak your message"
+                >
+                    🎙️
+                </button>
 
                 <button
                     type="submit"
