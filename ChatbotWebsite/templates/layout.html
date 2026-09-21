@@ -51,10 +51,10 @@
     >
 
 
-    <!-- Current site language ("en" or "hi") - used by the chat page too -->
+    <!-- Current site language ("en", "hi" or "mr") - used by the chat page too -->
     <script>
         window.SITE_LANG =
-            document.cookie.indexOf("googtrans=/en/hi") !== -1 ? "hi" : "en";
+            (document.cookie.match(/googtrans=\/en\/(hi|mr)/) || [0, "en"])[1];
     </script>
 
 
@@ -653,6 +653,15 @@
            GOOGLE TRANSLATE (hide its default bar / widget)
         ================================================== */
 
+        .lang-select {
+            width: auto;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+
         #google_translate_element,
         iframe.skiptranslate,
         .goog-te-banner-frame,
@@ -802,19 +811,20 @@
                 <ul class="navbar-nav wellbot-nav">
 
 
-                    <!-- LANGUAGE (English / Hindi) -->
+                    <!-- LANGUAGE (English / Hindi / Marathi) -->
 
-                    <li class="nav-item">
+                    <li class="nav-item d-flex align-items-center">
 
-                        <button
-                            type="button"
-                            id="langToggle"
-                            class="nav-link wellbot-nav-link notranslate"
+                        <select
+                            id="langSelect"
+                            class="form-select form-select-sm lang-select notranslate"
                             translate="no"
-                            onclick="toggleLanguage()"
+                            onchange="setLanguage(this.value)"
                         >
-                            🌐 <span id="langToggleText"></span>
-                        </button>
+                            <option value="en">🌐 English</option>
+                            <option value="hi">🌐 हिंदी</option>
+                            <option value="mr">🌐 मराठी</option>
+                        </select>
 
                     </li>
 
@@ -1106,7 +1116,7 @@
 
 
     <!-- ==================================================
-         LANGUAGE SWITCH (English <-> Hindi)
+         LANGUAGE SWITCH (English / Hindi / Marathi)
          Uses the free Google Translate widget, so the whole
          page (menus, chat, topics, tests...) changes language.
     ================================================== -->
@@ -1115,16 +1125,15 @@
 
     <script>
 
-        // button text: show the language you can switch TO
-        document.getElementById("langToggleText").textContent =
-            window.SITE_LANG === "hi" ? "English" : "हिंदी";
+        // show the current language in the dropdown
+        document.getElementById("langSelect").value = window.SITE_LANG;
 
 
-        function toggleLanguage() {
+        function setLanguage(lang) {
 
             const past = "expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
 
-            if (window.SITE_LANG === "hi") {
+            if (lang === "en") {
 
                 // back to English: remove the translate cookie
                 document.cookie = "googtrans=; " + past;
@@ -1132,8 +1141,8 @@
 
             } else {
 
-                // switch to Hindi: set the translate cookie
-                document.cookie = "googtrans=/en/hi; path=/";
+                // Hindi (hi) or Marathi (mr)
+                document.cookie = "googtrans=/en/" + lang + "; path=/";
 
             }
 
@@ -1142,14 +1151,14 @@
         }
 
 
-        // load the Google Translate script only when Hindi is selected
-        if (window.SITE_LANG === "hi") {
+        // load the Google Translate script only when Hindi / Marathi is selected
+        if (window.SITE_LANG !== "en") {
 
             window.googleTranslateElementInit = function () {
                 new google.translate.TranslateElement(
                     {
                         pageLanguage: "en",
-                        includedLanguages: "hi,en",
+                        includedLanguages: "hi,mr,en",
                         autoDisplay: false
                     },
                     "google_translate_element"

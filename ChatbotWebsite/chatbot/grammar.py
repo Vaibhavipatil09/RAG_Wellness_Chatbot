@@ -23,8 +23,8 @@ GRAMMAR_PROMPT = (
 
 
 TRANSLATE_PROMPT = (
-    "The message below may be in Hindi (Devanagari), Hinglish (Hindi written "
-    "in English letters) or English. Translate it into simple, correct "
+    "The message below may be in Hindi or Marathi (Devanagari), Hindi or "
+    "Marathi written in English letters, or English. Translate it into simple, correct "
     "English. If it is already English, just fix the grammar. Do NOT answer "
     "the message and do NOT add anything. Return ONLY the English text.\n\n"
     "Message: "
@@ -34,9 +34,9 @@ TRANSLATE_PROMPT = (
 def correct_grammar(text, lang="en"):
     text = text.strip()
 
-    # Hindi mode: translate the message to English so the chatbot
+    # Hindi / Marathi mode: translate the message to English so the chatbot
     # (which works in English) can understand it
-    if lang == "hi":
+    if lang in ("hi", "mr"):
         return _translate_to_english(text)
 
     # Very short messages ("hi", "thanks") - just fix spelling

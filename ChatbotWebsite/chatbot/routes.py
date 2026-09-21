@@ -78,9 +78,12 @@ def chatting():
 
     # Fix grammar / spelling first. The corrected text is used for the
     # crisis check, RAG and the intent classifier.
-    lang = request.form.get("lang", "en")  # "en" or "hi"
+    lang = request.form.get("lang", "en")  # "en", "hi" or "mr"
 
-    # (in Hindi mode this also translates the message to English)
+    if lang not in ("en", "hi", "mr"):
+        lang = "en"
+
+    # (in Hindi / Marathi mode this also translates the message to English)
     message = correct_grammar(original_message, lang)
 
     # Only tell the user about a correction if the WORDS changed
@@ -90,7 +93,7 @@ def chatting():
 
     corrected = None
 
-    if lang != "hi" and _words(message) != _words(original_message):
+    if lang == "en" and _words(message) != _words(original_message):
         corrected = message
 
     # ---------------------------------------------------------

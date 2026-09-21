@@ -448,7 +448,7 @@ function appendActivity(name, img, side, description, steps, youtube) {
     micButton.style.display = "none";
   } else {
     const recognition = new SpeechRec();
-    recognition.lang = window.SITE_LANG === "hi" ? "hi-IN" : (navigator.language || "en-US");
+    recognition.lang = { hi: "hi-IN", mr: "mr-IN" }[window.SITE_LANG] || navigator.language || "en-US";
     recognition.interimResults = true;
     recognition.continuous = false;
 

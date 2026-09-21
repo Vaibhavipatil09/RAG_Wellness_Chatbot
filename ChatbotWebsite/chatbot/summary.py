@@ -46,10 +46,12 @@ def summarize_chat(chat_text, lang="en"):
 
     prompt = SUMMARY_PROMPT
 
-    if lang == "hi":
+    languages = {"hi": "Hindi", "mr": "Marathi"}
+
+    if lang in languages:
         prompt = (
             "IMPORTANT: Write the whole summary, including the 3 headings, "
-            "in simple Hindi (Devanagari script).\n\n" + SUMMARY_PROMPT
+            f"in simple {languages[lang]} (Devanagari script).\n\n" + SUMMARY_PROMPT
         )
 
     try:
