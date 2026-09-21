@@ -491,4 +491,51 @@ function appendActivity(name, img, side, description, steps, youtube) {
       textBox.dispatchEvent(new Event("input")); // show suggestions for the spoken text
     };
   }
+
+
+  // ============================================================
+  // CHAT SUMMARY
+  // ============================================================
+
+  const summaryButton = document.getElementById("summaryButton");
+
+  summaryButton.addEventListener("click", function () {
+    // collect the messages currently shown in the chat
+    const lines = [];
+
+    document.querySelectorAll(".main-chat .chat").forEach(function (msg) {
+      const box = msg.querySelector(".chat-text");
+      if (!box || box.dataset.summarySkip) return; // skip welcome card / non-text cards
+
+      const text = box.innerText.trim();
+      if (!text) return;
+
+      const who = msg.classList.contains("right-msg") ? "User" : "WellBot";
+      lines.push(who + ": " + text);
+    });
+
+    if (lines.length < 2) {
+      appendMessage(BOT_NAME, BOT_IMG, "left", "There is nothing to summarize yet. Chat with me first and then try again.");
+      return;
+    }
+
+    summaryButton.disabled = true;
+    summaryButton.textContent = "⏳ Summarizing...";
+
+    $.ajax({
+      type: "POST",
+      url: "/chat_summary",
+      data: { chat: lines.slice(-30).join("\n") }, // last 30 messages
+    })
+      .done(function (data) {
+        appendMessage(BOT_NAME, BOT_IMG, "left", "**📝 Chat summary**\n\n" + data.summary);
+      })
+      .fail(function () {
+        appendMessage(BOT_NAME, BOT_IMG, "left", "Sorry, I couldn't create a summary right now.");
+      })
+      .always(function () {
+        summaryButton.disabled = false;
+        summaryButton.textContent = "📝 Summary";
+      });
+  });
 </script>

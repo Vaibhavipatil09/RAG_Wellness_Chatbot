@@ -1355,7 +1355,7 @@
                     </div>
 
 
-                    <div class="chat-text">
+                    <div class="chat-text" data-summary-skip="1">
 
                         {% if current_user.is_authenticated %}
 
@@ -1598,6 +1598,17 @@
 
                 </div>
 
+
+                <!-- Chat summary -->
+
+                <button
+                    type="button"
+                    id="summaryButton"
+                    class="btn btn-outline-secondary tool-button"
+                >
+                    📝 Summary
+                </button>
+
             </div>
 
 
@@ -1627,7 +1638,7 @@
                     class="mic-button"
                     title="Speak your message"
                 >
-                    🎙️
+                    🎤
                 </button>
 
                 <button

@@ -22,6 +22,7 @@ from ChatbotWebsite.chatbot.mindfulness import *
 from ChatbotWebsite.chatbot.mindfulness import get_youtube_link, get_video_suggestion, get_topic_video, get_test_video
 from ChatbotWebsite.chatbot.suggestions import get_suggestions
 from ChatbotWebsite.chatbot.grammar import correct_grammar
+from ChatbotWebsite.chatbot.summary import summarize_chat
 
 from ChatbotWebsite.chatbot.rag import (
     get_rag_response,
@@ -204,6 +205,22 @@ def chatting():
             "msg": response,
             "crisis": crisis,
             "corrected": corrected,
+        }
+    )
+
+
+# ============================================================
+# CHAT SUMMARY
+# ============================================================
+
+@chatbot.route("/chat_summary", methods=["POST"])
+def chat_summary():
+
+    chat_text = request.form.get("chat", "")
+
+    return jsonify(
+        {
+            "summary": summarize_chat(chat_text)
         }
     )
 
