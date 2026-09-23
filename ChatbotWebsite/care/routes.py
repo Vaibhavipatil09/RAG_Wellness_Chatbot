@@ -13,7 +13,9 @@ from flask import (
 from flask_login import login_required, current_user
 
 from ChatbotWebsite import db
-from ChatbotWebsite.models import User, Conversation, HumanMessage
+from datetime import datetime, date as date_cls
+
+from ChatbotWebsite.models import User, Conversation, HumanMessage, AvailabilitySlot
 
 care = Blueprint("care", __name__)
 
@@ -54,8 +56,24 @@ def _get_conversation_for_user(convo_id):
 @role_required("patient")
 def directory():
     psychologists = User.query.filter_by(role="psychologist", verified=True).all()
+
+    today = date_cls.today()
+
+    # open, upcoming slots for each psychologist, soonest first
+    slots_by_psych = {}
+    for p in psychologists:
+        slots_by_psych[p.id] = (
+            AvailabilitySlot.query.filter_by(psychologist_id=p.id, status="open")
+            .filter(AvailabilitySlot.date >= today)
+            .order_by(AvailabilitySlot.date, AvailabilitySlot.start_time)
+            .all()
+        )
+
     return render_template(
-        "care/directory.html", psychologists=psychologists, title="Talk to a Professional"
+        "care/directory.html",
+        psychologists=psychologists,
+        slots_by_psych=slots_by_psych,
+        title="Talk to a Professional",
     )
 
 
@@ -81,6 +99,38 @@ def request_session(psych_id):
     db.session.commit()
 
     flash("Session requested! You'll be able to chat once they accept.", "success")
+    return redirect(url_for("care.my_sessions"))
+
+
+# patient requests one specific time slot
+@care.route("/professionals/availability/<int:slot_id>/request", methods=["POST"])
+@login_required
+@role_required("patient")
+def request_slot(slot_id):
+    slot = AvailabilitySlot.query.get_or_404(slot_id)
+
+    if slot.status != "open" or slot.date < date_cls.today():
+        flash("Sorry, that slot is no longer available.", "info")
+        return redirect(url_for("care.directory"))
+
+    # a patient can only have one open request per slot
+    already = Conversation.query.filter_by(
+        patient_id=current_user.id, slot_id=slot.id
+    ).filter(Conversation.status.in_(["pending", "active"])).first()
+
+    if already:
+        flash("You've already requested this slot.", "info")
+        return redirect(url_for("care.my_sessions"))
+
+    convo = Conversation(
+        patient_id=current_user.id,
+        psychologist_id=slot.psychologist_id,
+        slot_id=slot.id,
+    )
+    db.session.add(convo)
+    db.session.commit()
+
+    flash("Time slot requested! You'll be notified once the professional responds.", "success")
     return redirect(url_for("care.my_sessions"))
 
 
@@ -133,9 +183,30 @@ def accept(convo_id):
         abort(403)
 
     convo.status = "active"
+
+    declined_count = 0
+
+    # if this request was for a specific slot, book it and
+    # automatically decline every other pending request for that slot
+    if convo.slot_id:
+        convo.slot.status = "booked"
+
+        others = Conversation.query.filter(
+            Conversation.slot_id == convo.slot_id,
+            Conversation.id != convo.id,
+            Conversation.status == "pending",
+        ).all()
+
+        for other in others:
+            other.status = "closed"
+            declined_count += 1
+
     db.session.commit()
 
-    flash("Session accepted. You can now chat.", "success")
+    message = "Session accepted. You can now chat."
+    if declined_count:
+        message += f" {declined_count} other request(s) for that time slot were automatically declined."
+    flash(message, "success")
     return redirect(url_for("care.dashboard"))
 
 
@@ -153,6 +224,101 @@ def decline(convo_id):
 
     flash("Request declined.", "info")
     return redirect(url_for("care.dashboard"))
+
+
+# ============================================================
+# PSYCHOLOGIST AVAILABILITY
+# ============================================================
+
+@care.route("/professionals/availability")
+@login_required
+@role_required("psychologist")
+def availability():
+    if not current_user.verified:
+        return render_template("care/pending.html", title="Verification Pending")
+
+    today = date_cls.today()
+
+    slots = (
+        AvailabilitySlot.query.filter_by(psychologist_id=current_user.id)
+        .filter(AvailabilitySlot.date >= today)
+        .order_by(AvailabilitySlot.date, AvailabilitySlot.start_time)
+        .all()
+    )
+
+    # how many pending requests are waiting on each slot
+    pending_counts = {}
+    for slot in slots:
+        pending_counts[slot.id] = Conversation.query.filter_by(
+            slot_id=slot.id, status="pending"
+        ).count()
+
+    return render_template(
+        "care/availability.html",
+        slots=slots,
+        pending_counts=pending_counts,
+        title="My Availability",
+    )
+
+
+@care.route("/professionals/availability/add", methods=["POST"])
+@login_required
+@role_required("psychologist")
+def add_slot():
+    date_str = request.form.get("date", "")
+    start_time = request.form.get("start_time", "")
+    end_time = request.form.get("end_time", "")
+
+    try:
+        slot_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        flash("Please choose a valid date.", "info")
+        return redirect(url_for("care.availability"))
+
+    if slot_date < date_cls.today():
+        flash("You can't add a slot in the past.", "info")
+        return redirect(url_for("care.availability"))
+
+    if not start_time or not end_time or start_time >= end_time:
+        flash("Please choose a valid start and end time (end must be after start).", "info")
+        return redirect(url_for("care.availability"))
+
+    slot = AvailabilitySlot(
+        psychologist_id=current_user.id,
+        date=slot_date,
+        start_time=start_time,
+        end_time=end_time,
+    )
+    db.session.add(slot)
+    db.session.commit()
+
+    flash("Time slot added.", "success")
+    return redirect(url_for("care.availability"))
+
+
+@care.route("/professionals/availability/<int:slot_id>/delete", methods=["POST"])
+@login_required
+@role_required("psychologist")
+def delete_slot(slot_id):
+    slot = AvailabilitySlot.query.get_or_404(slot_id)
+
+    if slot.psychologist_id != current_user.id:
+        abort(403)
+
+    has_requests = Conversation.query.filter(
+        Conversation.slot_id == slot.id,
+        Conversation.status.in_(["pending", "active"]),
+    ).first()
+
+    if has_requests:
+        flash("This slot has a request on it, so it can't be removed. Accept or decline the request first.", "info")
+        return redirect(url_for("care.availability"))
+
+    db.session.delete(slot)
+    db.session.commit()
+
+    flash("Time slot removed.", "info")
+    return redirect(url_for("care.availability"))
 
 
 # ============================================================

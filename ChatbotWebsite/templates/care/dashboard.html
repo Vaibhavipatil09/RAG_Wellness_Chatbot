@@ -15,7 +15,13 @@
       <div class="care-card d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
           <h5 class="mb-1">{{ c.patient.username }}</h5>
-          <div class="text-muted">Requested {{ c.created_at.strftime("%d %b, %H:%M") }}</div>
+          {% if c.slot %}
+            <div class="text-muted">
+              Requested slot: {{ c.slot.date.strftime("%a, %d %b") }}, {{ c.slot.start_time }}-{{ c.slot.end_time }}
+            </div>
+          {% else %}
+            <div class="text-muted">Requested {{ c.created_at.strftime("%d %b, %H:%M") }} &middot; no specific time</div>
+          {% endif %}
         </div>
         <div class="d-flex gap-2">
           <form method="POST" action="{{ url_for('care.accept', convo_id=c.id) }}">

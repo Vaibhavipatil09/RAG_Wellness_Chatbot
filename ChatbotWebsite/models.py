@@ -92,6 +92,11 @@ class Conversation(db.Model):
     status = db.Column(db.String(20), nullable=False, default='pending')
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    # set when this request was made against a specific time slot
+    # (left empty for a plain "talk whenever you're free" request)
+    slot_id = db.Column(db.Integer, db.ForeignKey('availability_slot.id'), nullable=True)
+    slot = db.relationship('AvailabilitySlot')
+
     patient = db.relationship('User', foreign_keys=[patient_id])
     psychologist = db.relationship('User', foreign_keys=[psychologist_id])
     messages = db.relationship(
@@ -115,3 +120,20 @@ class HumanMessage(db.Model):
 
     def __repr__(self):
         return f'HumanMessage({self.sender_id}, {self.timestamp})'
+
+
+# A time slot a psychologist has made available for patients to request
+class AvailabilitySlot(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    psychologist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.String(5), nullable=False)  # "14:00"
+    end_time = db.Column(db.String(5), nullable=False)    # "14:30"
+    # "open" (can be requested) or "booked" (one request was accepted)
+    status = db.Column(db.String(20), nullable=False, default='open')
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    psychologist = db.relationship('User', foreign_keys=[psychologist_id])
+
+    def __repr__(self):
+        return f'AvailabilitySlot({self.psychologist_id}, {self.date} {self.start_time}-{self.end_time}, {self.status})'
