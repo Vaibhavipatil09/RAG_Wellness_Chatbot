@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "care/_page_style.html" %}
+
+<div class="care-page">
+  <div class="care-container" style="max-width: 480px;">
+    <div class="care-card">
+      <h2 class="care-title">Register as a Professional</h2>
+      <p class="care-subtitle">
+        Your account will be reviewed by an admin before you can accept sessions.
+      </p>
+
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+          {{ form.username.label(class="form-label") }}
+          {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+          {% for error in form.username.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+          {% for error in form.email.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.license_number.label(class="form-label") }}
+          {{ form.license_number(class="form-control" + (" is-invalid" if form.license_number.errors else ""), placeholder="e.g. RCI/12345") }}
+          {% for error in form.license_number.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.specialty.label(class="form-label") }}
+          {{ form.specialty(class="form-control" + (" is-invalid" if form.specialty.errors else ""), placeholder="e.g. Clinical Psychologist") }}
+          {% for error in form.specialty.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-3">
+          {{ form.password.label(class="form-label") }}
+          {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+          {% for error in form.password.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="mb-4">
+          {{ form.confirm_password.label(class="form-label") }}
+          {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
+          {% for error in form.confirm_password.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+
+        {{ form.submit(class="btn btn-info care-btn w-100 text-white") }}
+      </form>
+
+      <p class="text-center mt-3 mb-0">
+        Not a professional? <a href="{{ url_for('users.register') }}">Register as a patient</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock content %}

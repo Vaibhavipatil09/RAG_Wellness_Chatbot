@@ -18,6 +18,7 @@ from ChatbotWebsite.users.forms import (
     UpdateAccountForm,
     RequestResetForm,
     ResetPasswordForm,
+    PsychologistRegistrationForm,
 )
 from ChatbotWebsite.users.utils import save_picture, send_reset_email
 import os
@@ -49,6 +50,38 @@ def register():
     return render_template("register.html", title="Register", form=form)
 
 
+# psychologist / professional register page/route
+@users.route("/register/professional", methods=["GET", "POST"])
+def register_professional():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.home"))
+    form = PsychologistRegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode(
+            "utf-8"
+        )
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password,
+            role="psychologist",
+            license_number=form.license_number.data,
+            specialty=form.specialty.data,
+            verified=False,
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash(
+            "Your account has been created! An admin will verify your license "
+            "number before you can start accepting sessions.",
+            "success",
+        )
+        return redirect(url_for("users.login"))
+    return render_template(
+        "register_professional.html", title="Register as a Professional", form=form
+    )
+
+
 # login page/route
 @users.route("/login", methods=["GET", "POST"])
 def login():
@@ -65,7 +98,13 @@ def login():
             login_user(user, remember=form.remember_me.data)
             flash("You have been logged in!", "success")
             next_page = request.args.get("next")
-            return redirect(next_page) if next_page else redirect(url_for("main.home"))
+            if next_page:
+                return redirect(next_page)
+            if user.role == "psychologist":
+                return redirect(url_for("care.dashboard"))
+            if user.role == "admin":
+                return redirect(url_for("care.admin_verify"))
+            return redirect(url_for("main.home"))
         else:
             flash("Login Unsuccessful. Please check email and password!", "danger")
     return render_template("login.html", title="Login", form=form)

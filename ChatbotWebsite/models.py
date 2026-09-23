@@ -24,6 +24,14 @@ class User(db.Model, UserMixin):
     # Backref One to many relationship with Journal Class
     journals = db.relationship('Journal', backref='user', lazy=True)
 
+    # "patient" (default), "psychologist" or "admin"
+    role = db.Column(db.String(20), nullable=False, default='patient')
+
+    # only used when role == "psychologist"
+    license_number = db.Column(db.String(50))
+    specialty = db.Column(db.String(100))
+    verified = db.Column(db.Boolean, nullable=False, default=False)
+
     # Reset password token
     def get_reset_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
@@ -73,3 +81,37 @@ class Journal(db.Model):
     # String representation of the journal
     def __repr__(self):
         return f'Journal({self.timestamp}, {self.mood}, {self.content})'
+
+
+# A request/session between one patient and one psychologist
+class Conversation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    psychologist_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # "pending" (waiting for the psychologist), "active" (chat open), "closed"
+    status = db.Column(db.String(20), nullable=False, default='pending')
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    patient = db.relationship('User', foreign_keys=[patient_id])
+    psychologist = db.relationship('User', foreign_keys=[psychologist_id])
+    messages = db.relationship(
+        'HumanMessage', backref='conversation', lazy=True,
+        cascade='all, delete-orphan', order_by='HumanMessage.id'
+    )
+
+    def __repr__(self):
+        return f'Conversation({self.patient_id} <-> {self.psychologist_id}, {self.status})'
+
+
+# One message inside a Conversation (patient <-> psychologist chat)
+class HumanMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    text = db.Column(db.String(3000), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    sender = db.relationship('User', foreign_keys=[sender_id])
+
+    def __repr__(self):
+        return f'HumanMessage({self.sender_id}, {self.timestamp})'

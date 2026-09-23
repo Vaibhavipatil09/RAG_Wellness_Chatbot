@@ -803,6 +803,34 @@
 
                     </li>
 
+
+                    {% if current_user.is_authenticated and current_user.role == "patient" %}
+                    <li class="nav-item">
+                        <a class="nav-link wellbot-nav-link" href="{{ url_for('care.directory') }}">
+                            <i class="bi bi-heart-pulse"></i>
+                            Talk to a Professional
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if current_user.is_authenticated and current_user.role == "psychologist" %}
+                    <li class="nav-item">
+                        <a class="nav-link wellbot-nav-link" href="{{ url_for('care.dashboard') }}">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if current_user.is_authenticated and current_user.role == "admin" %}
+                    <li class="nav-item">
+                        <a class="nav-link wellbot-nav-link" href="{{ url_for('care.admin_verify') }}">
+                            <i class="bi bi-patch-check"></i>
+                            Verify Professionals
+                        </a>
+                    </li>
+                    {% endif %}
+
                 </ul>
 
 

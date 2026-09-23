@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "care/_page_style.html" %}
+
+<div class="care-page">
+  <div class="care-container">
+    <h2 class="care-title">My Sessions</h2>
+    <p class="care-subtitle">Requests you've sent to professionals, and their status.</p>
+
+    {% if not conversations %}
+      <div class="care-card care-empty">
+        You haven't requested a session yet.
+        <br><br>
+        <a href="{{ url_for('care.directory') }}" class="btn care-btn text-white">Find a Professional</a>
+      </div>
+    {% endif %}
+
+    {% for c in conversations %}
+      <div class="care-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h5 class="mb-1">
+            {{ c.psychologist.username }}
+            {% if c.status == "pending" %}<span class="care-badge badge-pending">Waiting for acceptance</span>{% endif %}
+            {% if c.status == "active" %}<span class="care-badge badge-active">Active</span>{% endif %}
+            {% if c.status == "closed" %}<span class="care-badge badge-closed">Closed</span>{% endif %}
+          </h5>
+          <div class="text-muted">{{ c.psychologist.specialty }}</div>
+        </div>
+        {% if c.status == "active" %}
+          <a href="{{ url_for('care.human_chat', convo_id=c.id) }}" class="btn care-btn text-white">Open Chat</a>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

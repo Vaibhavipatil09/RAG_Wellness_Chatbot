@@ -31,6 +31,7 @@ def create_app(config_class=Config):
     from ChatbotWebsite.users.routes import users
     from ChatbotWebsite.errors.handlers import errors
     from ChatbotWebsite.journal.routes import journals
+    from ChatbotWebsite.care.routes import care
 
     # Register the routes
     app.register_blueprint(users)
@@ -38,10 +39,34 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(errors)
     app.register_blueprint(journals)
+    app.register_blueprint(care)
 
     # Create database tables if they don't exist yet
     # (users.db was empty, so login/register failed with "no such table: user")
     with app.app_context():
         db.create_all()
+
+        # Create the admin account from .env if it does not exist yet.
+        # Add ADMIN_EMAIL and ADMIN_PASSWORD to your .env to use this.
+        from ChatbotWebsite.models import User
+        import os
+
+        admin_email = os.environ.get("ADMIN_EMAIL")
+        admin_password = os.environ.get("ADMIN_PASSWORD")
+
+        if admin_email and admin_password:
+            admin = User.query.filter_by(email=admin_email).first()
+
+            if not admin:
+                hashed = bcrypt.generate_password_hash(admin_password).decode("utf-8")
+                admin = User(
+                    username="admin",
+                    email=admin_email,
+                    password=hashed,
+                    role="admin",
+                )
+                db.session.add(admin)
+                db.session.commit()
+                print(f">>> Admin account created: {admin_email}")
 
     return app

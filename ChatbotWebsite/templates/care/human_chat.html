@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "care/_page_style.html" %}
+
+<style>
+  .hc-wrap { max-width: 700px; margin: 0 auto; padding: 100px 16px 20px; }
+  .hc-card {
+    background: #fff; border: 1px solid #e3eef1; border-radius: 16px;
+    display: flex; flex-direction: column; height: 70vh; overflow: hidden;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+  }
+  .hc-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px; border-bottom: 1px solid #eef3f4; background: #f7fbfc;
+  }
+  .hc-body { flex: 1; overflow-y: auto; padding: 16px; }
+  .hc-msg { max-width: 75%; margin-bottom: 10px; padding: 9px 13px; border-radius: 14px; font-size: 0.92rem; word-wrap: break-word; }
+  .hc-msg.mine { margin-left: auto; background: #0798b8; color: #fff; border-bottom-right-radius: 4px; }
+  .hc-msg.theirs { margin-right: auto; background: #eef3f4; color: #1c2b33; border-bottom-left-radius: 4px; }
+  .hc-time { font-size: 0.65rem; opacity: 0.7; display: block; margin-top: 3px; }
+  .hc-footer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #eef3f4; }
+  .hc-input { flex: 1; border: 1px solid #dce9ec; border-radius: 22px; padding: 8px 16px; }
+  .hc-send { border: none; background: #0798b8; color: #fff; border-radius: 50%; width: 42px; height: 42px; flex-shrink: 0; }
+</style>
+
+<div class="hc-wrap">
+  <div class="hc-card">
+    <div class="hc-header">
+      <div>
+        <strong>{{ other.username }}</strong>
+        {% if current_user.role == "patient" %}<div class="text-muted" style="font-size:0.8rem;">{{ other.specialty }}</div>{% endif %}
+      </div>
+      <form method="POST" action="{{ url_for('care.end_session', convo_id=convo.id) }}"
+            onsubmit="return confirm('End this session?');">
+        <button type="submit" class="btn btn-outline-danger btn-sm">End Session</button>
+      </form>
+    </div>
+
+    <div class="hc-body" id="hcBody"></div>
+
+    <form class="hc-footer" id="hcForm">
+      <input type="text" id="hcInput" class="hc-input" placeholder="Type a message..." autocomplete="off">
+      <button type="submit" class="hc-send"><i class="bi bi-send-fill"></i></button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Plain JavaScript (no jQuery needed on this page)
+  const convoId = {{ convo.id }};
+  const body = document.getElementById("hcBody");
+  const form = document.getElementById("hcForm");
+  const input = document.getElementById("hcInput");
+  const sendBtn = form.querySelector(".hc-send");
+  let lastId = 0;
+  let closed = false;
+  let sending = false;
+
+  function addMsg(m) {
+    const div = document.createElement("div");
+    div.className = "hc-msg " + (m.mine ? "mine" : "theirs");
+    const textSpan = document.createElement("div");
+    textSpan.textContent = m.text;
+    div.appendChild(textSpan);
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "hc-time";
+    timeSpan.textContent = m.mine ? m.time : (m.sender_name + " \u00b7 " + m.time);
+    div.appendChild(timeSpan);
+    body.appendChild(div);
+    lastId = Math.max(lastId, m.id);
+  }
+
+  function showEndedNote() {
+    if (document.getElementById("hcEndedNote")) return;
+    const note = document.createElement("div");
+    note.id = "hcEndedNote";
+    note.className = "text-center text-muted mt-2";
+    note.style.fontSize = "0.82rem";
+    note.textContent = "This session has ended.";
+    body.appendChild(note);
+  }
+
+  function poll() {
+    if (closed) return;
+
+    fetch(`/professionals/chat/${convoId}/messages?after=${lastId}`)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        data.messages.forEach(addMsg);
+        if (data.messages.length) body.scrollTop = body.scrollHeight;
+        if (data.closed) {
+          closed = true;
+          input.disabled = true;
+          sendBtn.disabled = true;
+          showEndedNote();
+        }
+      })
+      .catch(function (err) {
+        console.error("Could not load messages:", err);
+      });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const text = input.value.trim();
+    if (!text || sending) return;
+
+    sending = true;
+    sendBtn.disabled = true;
+
+    fetch(`/professionals/chat/${convoId}/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "text=" + encodeURIComponent(text),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.error) {
+          alert(data.error === "empty" ? "Message can't be empty." : data.error);
+          return;
+        }
+        input.value = "";
+        return poll();
+      })
+      .catch(function (err) {
+        alert("Couldn't send your message. Please check your connection and try again.");
+        console.error("Send failed:", err);
+      })
+      .finally(function () {
+        sending = false;
+        if (!closed) sendBtn.disabled = false;
+        input.focus();
+      });
+  });
+
+  poll();
+  setInterval(poll, 3000);
+</script>
+{% endblock content %}

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "care/_page_style.html" %}
+
+<div class="care-page">
+  <div class="care-container">
+    <h2 class="care-title">Verify Professionals</h2>
+    <p class="care-subtitle">Review the license number, then approve or reject.</p>
+
+    <h5 class="mb-2">Pending</h5>
+    {% if not pending %}
+      <div class="care-card">No pending applications.</div>
+    {% endif %}
+    {% for p in pending %}
+      <div class="care-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h5>{{ p.username }}</h5>
+          <div class="text-muted">{{ p.email }}</div>
+          <div><strong>License:</strong> {{ p.license_number }} &nbsp; | &nbsp; <strong>Specialty:</strong> {{ p.specialty }}</div>
+        </div>
+        <div class="d-flex gap-2">
+          <form method="POST" action="{{ url_for('care.approve', user_id=p.id) }}">
+            <button type="submit" class="btn btn-success care-btn btn-sm">Approve</button>
+          </form>
+          <form method="POST" action="{{ url_for('care.reject', user_id=p.id) }}"
+                onsubmit="return confirm('Reject and delete this application?');">
+            <button type="submit" class="btn btn-outline-danger care-btn btn-sm">Reject</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+
+    <h5 class="mb-2 mt-4">Verified</h5>
+    {% if not verified_list %}
+      <div class="care-card">No verified professionals yet.</div>
+    {% endif %}
+    {% for p in verified_list %}
+      <div class="care-card">
+        <h5>{{ p.username }} <span class="care-badge badge-active">Verified</span></h5>
+        <div class="text-muted">{{ p.email }} &nbsp;|&nbsp; License: {{ p.license_number }} &nbsp;|&nbsp; {{ p.specialty }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

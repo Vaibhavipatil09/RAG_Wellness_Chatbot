@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+{% include "care/_page_style.html" %}
+
+<div class="care-page">
+  <div class="care-container">
+    <h2 class="care-title">Professional Dashboard</h2>
+    <p class="care-subtitle">Session requests from patients, and your active chats.</p>
+
+    <h5 class="mb-2">Pending requests</h5>
+    {% if not pending %}
+      <div class="care-card care-empty">No pending requests right now.</div>
+    {% endif %}
+    {% for c in pending %}
+      <div class="care-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h5 class="mb-1">{{ c.patient.username }}</h5>
+          <div class="text-muted">Requested {{ c.created_at.strftime("%d %b, %H:%M") }}</div>
+        </div>
+        <div class="d-flex gap-2">
+          <form method="POST" action="{{ url_for('care.accept', convo_id=c.id) }}">
+            <button type="submit" class="btn btn-success care-btn btn-sm">Accept</button>
+          </form>
+          <form method="POST" action="{{ url_for('care.decline', convo_id=c.id) }}">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Decline</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+
+    <h5 class="mb-2 mt-4">Active sessions</h5>
+    {% if not active %}
+      <div class="care-card care-empty">No active sessions right now.</div>
+    {% endif %}
+    {% for c in active %}
+      <div class="care-card d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h5 class="mb-0">{{ c.patient.username }} <span class="care-badge badge-active">Active</span></h5>
+        <a href="{{ url_for('care.human_chat', convo_id=c.id) }}" class="btn care-btn text-white">Open Chat</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
