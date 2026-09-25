@@ -21,10 +21,13 @@ mysql-connector-python==8.0.32
 Werkzeug==2.2.2
 matplotlib
 python-dotenv==1.0.1
-sentence-transformers
 faiss-cpu
 anthropic
 scikit-learn==1.7.2
+torch==2.1.2
+transformers==4.35.2
+sentence-transformers==2.2.2
+google-genai
 
 # For MAC
 # autocorrect==2.6.1

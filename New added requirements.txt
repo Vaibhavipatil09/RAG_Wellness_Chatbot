@@ -3,3 +3,8 @@
 #Sentence Transformers 2.2.2
 
 #  3.10.11
+
+after windows new installation this used 
+
+python -m pip uninstall -y huggingface_hub
+python -m pip install "huggingface_hub<0.26"
